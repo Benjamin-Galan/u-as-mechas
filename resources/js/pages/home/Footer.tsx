@@ -1,0 +1,167 @@
+import { Link } from "@inertiajs/react"
+import { Scissors, Facebook, Instagram, Twitter } from "lucide-react"
+
+export default function Footer() {
+    const currentYear = new Date().getFullYear()
+
+    return (
+        <footer className="border-t bg-gray-200">
+            <div className="container mx-auto py-16">
+                {/* Sección principal del footer */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                    {/* Columna 1: Logo e información */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2">
+                            <Scissors className="h-5 w-5 text-pink-500" />
+                            <span className="text-xl font-serif font-bold">Uñas&Mechas</span>
+                        </div>
+
+                        <p className="text-gray-600 text-sm">
+                            Tu destino para descubrir y realzar tu belleza natural con servicios profesionales.
+                        </p>
+
+                        <div className="flex gap-4">
+                            <a
+                                href="#"
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-pink-500 hover:bg-pink-500 hover:text-white transition-colors"
+                                aria-label="Facebook"
+                            >
+                                <Facebook className="h-4 w-4" />
+                            </a>
+                            <a
+                                href="#"
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-purple-600 hover:bg-purple-600 hover:text-white transition-colors"
+                                aria-label="Instagram"
+                            >
+                                <Instagram className="h-4 w-4" />
+                            </a>
+                            <a
+                                href="#"
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-teal-500 hover:bg-teal-500 hover:text-white transition-colors"
+                                aria-label="Twitter"
+                            >
+                                <Twitter className="h-4 w-4" />
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Columna 2: Enlaces rápidos */}
+                    <div>
+                        <h3 className="text-base font-medium mb-4 text-gray-800">Enlaces rápidos</h3>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link href="/" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Inicio
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/servicios" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Servicios
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/paquetes" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Paquetes
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/promociones" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Promociones
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/nosotros" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Nosotros
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/contacto" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Contacto
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Columna 3: Servicios */}
+                    <div>
+                        <h3 className="text-base font-medium mb-4 text-gray-800">Servicios</h3>
+                        <ul className="space-y-3">
+                            <li>
+                                <a href="#" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Cortes de cabello
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Coloración
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Tratamientos capilares
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Manicure y pedicure
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Maquillaje
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="text-gray-600 hover:text-pink-500 transition-colors text-sm">
+                                    Tratamientos faciales
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Columna 4: Horario y botón */}
+                    <div>
+                        <h3 className="text-base font-medium mb-4 text-gray-800">Horario</h3>
+                        <ul className="space-y-3">
+                            <li className="flex justify-between text-sm">
+                                <span className="text-gray-600">Lunes - Viernes</span>
+                                <span className="text-gray-800">9:00 AM - 8:00 PM</span>
+                            </li>
+                            <li className="flex justify-between text-sm">
+                                <span className="text-gray-600">Sábado</span>
+                                <span className="text-gray-800">9:00 AM - 8:00 PM</span>
+                            </li>
+                            <li className="flex justify-between text-sm">
+                                <span className="text-gray-600">Domingo</span>
+                                <span className="text-gray-800">10:00 AM - 6:00 PM</span>
+                            </li>
+                        </ul>
+                        <div className="mt-6">
+                            <Link
+                                href="/agendar"
+                                className="inline-block w-full text-center py-3 px-6 bg-pink-500 text-white rounded-full shadow-sm hover:shadow-md hover:bg-pink-600 transition-all"
+                            >
+                                Agenda tu cita
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Línea divisoria */}
+                <div className="border-t border-gray-200 mt-12 pt-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center">
+                        <p className="text-gray-500 text-sm">© {currentYear} Uñas&Mechas. Todos los derechos reservados.</p>
+                        <div className="flex gap-6 mt-4 md:mt-0">
+                            <a href="#" className="text-gray-500 hover:text-pink-500 text-xs">
+                                Política de Privacidad
+                            </a>
+                            <a href="#" className="text-gray-500 hover:text-pink-500 text-xs">
+                                Términos de Servicio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    )
+}
