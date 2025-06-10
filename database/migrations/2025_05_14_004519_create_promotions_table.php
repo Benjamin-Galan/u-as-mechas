@@ -16,8 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('image')->nullable();
-            $table->enum('type', ['percentaje', 'fixed', 'bogo', 'general']);
-            $table->decimal('value', 8, 2)->nullable();
+            $table->enum('type', ['general', 'individual', 'mixed']);
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->decimal('subtotal', 8, 2);
+            $table->decimal('total', 8, 2);
             $table->timestamps();
         });
     }

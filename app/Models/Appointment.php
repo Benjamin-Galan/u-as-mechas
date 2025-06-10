@@ -9,25 +9,54 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id', 'staff_id', 'appointment_date', 'status',
-        'total_price', 'secure_token', 'notes'
+    protected $casts = [
+        'appointment_date' => 'datetime',
+        'scheduled_at' => 'datetime',
+        'sent_at' => 'datetime',
     ];
 
-    public function user ()
+    protected $fillable = [
+        'user_id',
+        'staff_id',
+        'appointment_date',
+        'appointment_time',
+        'status',
+        'total_price',
+        'secure_token',
+        'notes'
+    ];
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function staff ()
+    public function staff()
     {
         return $this->belongsTo(Staff::class);
     }
 
-    public function services ()
+    public function services()
     {
-        return $this->belongsToMany(Service::class, 'appointment_service')
-                    ->withPivot(['price', 'discount', 'promotionId'])
-                    ->withTimestamps();
+        return $this->belongsToMany(Service::class, 'appointment_service');
+    }
+
+    public function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'appointment_promotion')
+            ->withPivot(['price', 'discount_applied'])
+            ->withTimestamps();
+    }
+
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'appointment_package')
+            ->withPivot(['price', 'discount_applied'])
+            ->withTimestamps();
+    }
+
+    public function servicesWithDetails()
+    {
+        return $this->services()->with(['category', 'promotions', 'packages']);
     }
 }

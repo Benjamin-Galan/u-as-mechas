@@ -10,6 +10,9 @@ class Staff extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'email', 'phone', 'position', 'available'];
+    protected $casts = [
+        'available' => 'boolean'
+    ];
 
     public function appointments ()
     {

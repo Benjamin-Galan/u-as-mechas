@@ -1,8 +1,31 @@
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import MainLayout from "@/layouts/MainLayout";
 import Hero from "./home/Hero";
+import WhatsAppChat from "@/components/WhatsAppChat";
+import PackageList from "./home/Packages";
+import Promotion from "./home/Promotion";
+import Services from "./home/Services";
+import About from "./home/About";
+import MapSection from "./home/MapSection";
+import Contact from "./home/Contact";
+
+import { PackagesList, PromotionList, ServiceList } from "@/types";
 
 export default function Welcome() {
+    const { services, packages, promotions } = usePage().props as {
+        services?: ServiceList
+        packages?: PackagesList
+        promotions?: PromotionList
+    }
+
+    console.log(services, 'servicios')
+    console.log(packages, 'paquetes')
+    console.log(promotions, 'promociones')
+
+    if (!promotions) return null;
+    if (!services) return null;
+    if (!packages) return null;
+
     return (
         <>
             <Head title="Uñas & Mechas - Salón de Belleza">
@@ -11,11 +34,24 @@ export default function Welcome() {
             </Head>
 
             <MainLayout>
-                <Hero />
 
                 <main>
-
+                    <Hero />
+                    <Promotion
+                        promotions={promotions}
+                    />
+                    <Services 
+                        services={services}
+                    />
+                    <PackageList 
+                        packages={packages}
+                    />
+                    <About />
+                    <MapSection />
+                    <Contact />
                 </main>
+
+                <WhatsAppChat phoneNumber="+505 1234 5678" />
             </MainLayout>
         </>
     )

@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { Link } from "@inertiajs/react"
 
 export default function Hero() {
@@ -39,19 +40,20 @@ export default function Hero() {
 
         {/* Botones */}
         <div className="flex flex-col justify-center sm:flex-row gap-5 mt-8 w-full max-w-md">
-          <Link
-            href="/agendar"
-            className="bg-white text-gray-900 border-transparent px-8 py-3 rounded-full font-medium text-base hover:bg-gray-100 transition-all duration-300 shadow-lg w-full sm:w-auto flex items-center justify-center"
+          <Button
+            asChild
+            className="bg-white text-gray-900 hover:bg-gray-200 rounded-full px-8 py-3 shadow-lg w-full sm:w-auto"
           >
-            Agendar cita
-          </Link>
+            <Link href="/agendar">Agendar cita</Link>
+          </Button>
 
-          <Link
-            href="/servicios"
-            className="bg-transparent text-white border border-yellow-700 px-8 py-3 rounded-full font-medium text-base hover:bg-yellow-700/10 transition-all duration-300 w-full sm:w-auto flex items-center justify-center"
+          <Button
+            variant="outline"
+            asChild
+            className="bg-transparent text-white border-yellow-700 hover:bg-yellow-800/10 rounded-full px-8 py-3 w-full sm:w-auto"
           >
-            Ver servicios
-          </Link>
+            <Link href="/servicios" className="hover:text-white">Ver servicios</Link>
+          </Button>
         </div>
       </div>
     </section>

@@ -12,31 +12,28 @@ class Service extends Model
     protected $fillable = ['name', 'description', 'price', 'discount', 'duration', 'image', 'category_id'];
 
     //Un servicio pertenece a una categoría
-    public function category () 
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function appointments ()
+    public function appointments()
     {
-        return $this->belongsToMany(Service::class, 'appointment_service')
-                    ->withPivot(['price', 'discount_applied', 'promotionId'])
-                    ->withTimestamps();
+        return $this->belongsToMany(Appointment::class, 'appointment_service')
+            ->withPivot(['price', 'discount_applied'])
+            ->withTimestamps();
     }
 
-    public function promotion ()
+    public function promotions()
     {
-        return $this->belongsToMany(Promotion::class, 'promotion_service');
+        return $this->belongsToMany(Promotion::class, 'promotion_service')
+            ->withPivot('individual_price', 'individual_discount', 'is_bogo')
+            ->withTimestamps();
     }
 
-    // public function calculateTotal()
-    // {
-    //     $total = 0;
-
-    //     //Iterar sobre los servicios de la cita
-    //     foreach ($this->services as $service) {
-    //         $total += ($service->pivot->price - $service->pivot->discount_applied);
-    //     }
-    // }
-
+    //Un servicio puede pertenecer a muchos paquetes
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'package_service');
+    }
 }

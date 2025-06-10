@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('promotion_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->decimal('individual_price', 8, 2)->default(0.00);
+            $table->decimal('individual_discount', 8, 2)->default(0.00);
+            $table->boolean('is_bogo')->default(false);
             $table->timestamps();
         });
     }

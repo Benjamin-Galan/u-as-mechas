@@ -15,40 +15,31 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
 
+    /* Colores existentes del sistema */
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
-
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
-
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
-
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
-
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
-
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
-
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
-
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
-
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
-
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -57,6 +48,27 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    /* Tu paleta de colores personalizada */
+    --color-beauty-dark: #150016;
+    --color-beauty-deep: #29104A;
+    --color-beauty-medium: #522C5D;
+    --color-beauty-muted: #845162;
+    --color-beauty-soft: #E3B6B1;
+    --color-beauty-light: #F5E6E3;
+
+    /* Variaciones adicionales para mayor flexibilidad */
+    --color-beauty-50: #F5E6E3;
+    --color-beauty-100: #E3B6B1;
+    --color-beauty-200: #845162;
+    --color-beauty-300: #522C5D;
+    --color-beauty-400: #29104A;
+    --color-beauty-500: #150016;
+    --color-beauty-600: #120014;
+    --color-beauty-700: #0F0011;
+    --color-beauty-800: #0C000E;
+    --color-beauty-900: #09000B;
+    --color-beauty-950: #060008;
 }
 
 /*

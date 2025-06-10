@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
@@ -50,7 +51,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function appointments ()
+    public function appointments()
     {
         return $this->hasMany(Appointment::class);
     }
@@ -58,5 +59,14 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function redirectToDashboard(): RedirectResponse
+    {
+        return match ($this->role) {
+            'admin' => to_route('dashboard'),
+            'cliente' => to_route('client.dashboard'),
+            default => abort(403, 'Rol no permitido.'),
+        };
     }
 }

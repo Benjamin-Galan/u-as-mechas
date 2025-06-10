@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('phone');
             $table->string('position');
-            $table->string('available')->default(true);
+            $table->boolean('available')->default(true);
             $table->timestamps();
         });
     }
