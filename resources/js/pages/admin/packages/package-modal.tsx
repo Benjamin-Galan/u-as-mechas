@@ -61,16 +61,12 @@ export default function PackageModal({ open, onClose, packageToEdit = null, serv
         payload.append("services", JSON.stringify(form.services))
 
         try {
-
-
             if (packageToEdit) {
                 payload.append('_method', 'PUT')
                 await axios.post(`/packages/${packageToEdit.id}`, payload)
             } else {
                 await axios.post("/packages", payload)
             }
-
-
             onClose()
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response?.status === 422) {

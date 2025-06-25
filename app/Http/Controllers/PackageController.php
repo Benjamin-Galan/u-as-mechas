@@ -20,7 +20,7 @@ class PackageController extends Controller
 
     public function index()
     {
-        return Inertia::render('admin/packages/packages', [
+        return Inertia::render('admin/packages/page', [
             'packages' => Package::with('services')->get(),
             'services' => Service::all()
         ]);
@@ -29,26 +29,19 @@ class PackageController extends Controller
     public function store(PackageRequest $request)
     {
         //Llamar al servicio para manejar la lógica de creación
-        $package = $this->packageService->store($request->validated());
+        $this->packageService->store($request->validated());
 
         //Retornar la respuesta
-        return response()->json([
-            'message' => 'Paquete creado correctamente',
-            'package' => $package
-        ]);
+        return redirect()->back()->with('success', 'Paquete creado exitosamente');
     }
 
     public function update(PackageRequest $request, string $id)
     {
         $package = Package::findOrFail($id);
-        $updated = $this->packageService->update($package, $request->validated());
+        $this->packageService->update($package, $request->validated());
 
-        return response()->json([
-            'message' => 'Paquete actualizado correctamente',
-            'package' => $updated,
-        ]);
+        return redirect()->back()->with('success', 'Paquete actualizado exitosamente');
     }
-
 
     public function destroy(string $id)
     {
@@ -57,8 +50,6 @@ class PackageController extends Controller
         //Llamar al servicio para manejar la lógica de eliminación
         $this->packageService->destroy($package);
 
-        return response()->json([
-            'message' => 'Paquete eliminado correctamente'
-        ]);
+        return redirect()->back()->with('success', 'Paquete Eliminado exitosamente');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\PromotionCreated;
 use App\Models\Promotion;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -55,6 +56,8 @@ class PromotionService
             $result = $promotion->services()->sync($syncData);
             Log::info('Resultado del sync:', ['result' => $result]);
         }
+
+        event(new PromotionCreated($promotion));
 
         // Recargar la promoción con sus servicios
         return $promotion->load('services');

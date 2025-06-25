@@ -28,7 +28,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        return Inertia::render('admin/promotions/promotions', [
+        return Inertia::render('admin/promotions/page', [
             // Obtener todas las promociones con sus servicios relacionados
             'promotions' => Promotion::with('services')->get(),
             'services' => Service::all(),

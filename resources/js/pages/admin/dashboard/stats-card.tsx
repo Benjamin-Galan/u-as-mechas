@@ -16,7 +16,7 @@ export function StatsCard({ title, value, icon, change, changeText, className }:
     const isPositive = change && change > 0
 
     return (
-        <Card className={cn("overflow-hidden border-indigo-900 shadow-sm", className)}>
+        <Card className={cn("overflow-hidden dark:bg-gray-800 shadow-lg", className)}>
             <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-muted-foreground">{title}</p>

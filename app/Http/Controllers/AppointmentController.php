@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AppointmentRequest;
+use App\Http\Requests\AppointmentRescheduleRequest;
+use App\Http\Requests\ChangeAppointmentStatusRequest;
 use App\Models\Appointment;
 use App\Models\CompanyInfo;
 use App\Models\Package;
@@ -65,16 +67,80 @@ class AppointmentController extends Controller
 
         $this->appointmentService->destroy($appointment);
 
+        return redirect()->back()->with('success', 'Cita eliminada exitosamente');
+    }
+
+    public function show(string $id)
+    {
+        $appointment = $this->appointmentService->getAppointmentDetails($id);
+
         return response()->json([
-            'message' => 'Cita eliminada correctamente'
+            'appointment' => $appointment,
         ]);
     }
 
-    public function admin()
+    public function admin(Request $request)
     {
-        return Inertia::render('admin/appointments/appointments', [
-            'appointments' => Appointment::with(['user', 'staff', 'services', 'promotions', 'packages'])
-                ->paginate(10), // Paginación con 10 registros por página
+        $query = Appointment::with(['user', 'staff', 'services', 'promotions', 'packages']);
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('date')) {
+            $query->whereDate('appointment_date', $request->date);
+        }
+
+        if ($request->has('sort') && in_array($request->sort, ['asc', 'desc'])) {
+            $query->orderBy('appointment_date', $request->sort);
+        } else {
+            $query->orderBy('appointment_date', 'desc');
+        }
+
+        return Inertia::render('admin/appointments/page', [
+            'appointments' => $query->paginate(10)->appends($request->query()),
+        ]);
+    }
+
+    public function changeStatus(ChangeAppointmentStatusRequest $request, string $id)
+    {
+        $appointment = Appointment::findOrFail($id);
+
+        try {
+            $updated = $this->appointmentService->updateStatus($appointment, $request->status);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+
+        return redirect()->back()->with('success', 'Estado actualizado');
+    }
+
+    public function reschedule(AppointmentRescheduleRequest $request, Appointment $appointment)
+    {
+        $this->appointmentService->reschedule($appointment, $request->validated());
+
+        return redirect()->back()->with('success', 'Cita Reagendada');
+    }
+
+    public function getUnavailableHours(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+        ]);
+
+        $date = $request->input('date');
+
+        $unavailableHours = $this->appointmentService->getUnavailableHours($date);
+
+        return response()->json([
+            'unavailable_hours' => $unavailableHours,
         ]);
     }
 }

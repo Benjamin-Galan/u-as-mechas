@@ -16,7 +16,7 @@ export const getStatusBadge = (status: boolean | string) => {
             )
         case "pending":
             return (
-                <Badge variant="secondary" className="bg-orange-100 text-orange-800 hover:bg-red-100">
+                <Badge variant="secondary" className="bg-yellow-100 text-orange-800 hover:bg-red-100">
                     Pendiente
                 </Badge>
             )
@@ -24,6 +24,30 @@ export const getStatusBadge = (status: boolean | string) => {
             return (
                 <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
                     Confirmada
+                </Badge>
+            )
+        case "cancelled":
+            return (
+                <Badge variant="default" className="bg-red-100 text-red-800 hover:bg-green-100">
+                    Cancelada
+                </Badge>
+            )
+            case "completed":
+            return (
+                <Badge variant="default" className="bg-blue-200 text-blue-800 hover:bg-green-100">
+                    Completada
+                </Badge>
+            )
+            case "cancelation":
+            return (
+                <Badge variant="default" className="bg-red-100 text-red-800 hover:bg-green-100">
+                    Cancelada
+                </Badge>
+            )
+            case "appointment":
+            return (
+                <Badge variant="default" className="bg-blue-200 text-blue-800 hover:bg-green-100">
+                    Nueva Cita
                 </Badge>
             )
         default:

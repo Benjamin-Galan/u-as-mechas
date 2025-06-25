@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Events\AppointmentConfirmed;
 use App\Events\AppointmentCreated;
+use App\Http\Requests\AppointmentRequest;
 use App\Models\Appointment;
+use Clue\Redis\Protocol\Model\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -54,7 +57,7 @@ class AppointmentService
             }
 
             // Emitir evento después de guardar todo
-            // event(new AppointmentCreated($appointment));
+            event(new AppointmentCreated($appointment));
 
             return $appointment;
         });
@@ -118,5 +121,75 @@ class AppointmentService
             // Emitir un evento
             // event(new AppointmentDeleted($appointment));
         });
-    }    
+    }
+
+    public function getFilteredAppointments(array $filters)
+    {
+        $query = Appointment::with(['user', 'staff', 'services', 'promotions', 'packages']);
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->join('users', 'appointments.user_id', '=', 'users.id')
+                ->where('users.name', 'like', '%' . $search . '%')
+                ->select('appointments.*'); // evita conflictos de columnas
+        }
+
+        if (!empty($filters['status']) && $filters['status'] !== 'all') {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['date'])) {
+            $query->whereDate('appointment_date', $filters['date']);
+        }
+
+        $sort = in_array($filters['sort'] ?? null, ['asc', 'desc']) ? $filters['sort'] : 'desc';
+        $query->orderBy('appointment_date', $sort);
+
+        return $query->paginate(10)->appends($filters);
+    }
+
+    public function updateStatus(Appointment $appointment, string $status): Appointment
+    {
+        if (!in_array($status, ['pending', 'confirmed', 'cancelled', 'completed'])) {
+            throw new \InvalidArgumentException("Estado inválido");
+        }
+
+        $appointment->status = $status;
+        $appointment->save();
+
+        event(new AppointmentConfirmed($appointment));
+
+        return $appointment;
+    }
+
+    //Función que devuelve los detalles de una cita
+    public function getAppointmentDetails(int $appointmentId): Appointment
+    {
+        $userId = Auth::id();
+
+        $appointment = Appointment::with(['services', 'promotions', 'packages', 'staff'])
+            ->where('id', $appointmentId)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+
+        return $appointment;
+    }
+
+    //Funcion que reagenda la cita desde el admin
+    public function reschedule(Appointment $appointment, array $data): void
+    {
+        $appointment->update([
+            'appointment_date' => $data['appointment_date'],
+            'appointment_time' => $data['appointment_time'],
+        ]);
+    }
+
+    public function getUnavailableHours(string $date): array
+    {
+        return Appointment::whereDate('appointment_date', $date)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->pluck('appointment_time')
+            ->map(fn($time) => \Carbon\Carbon::createFromFormat('H:i:s', $time)->format('H:i'))
+            ->toArray();
+    }
 }

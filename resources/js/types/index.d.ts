@@ -64,6 +64,7 @@ export interface Service {
     category_id: number
     created_at: string
     updated_at: string
+    category: Category
 }
 
 export type ServiceList = Service[];
@@ -184,23 +185,6 @@ export interface Company {
     updated_at: string;
 }
 
-type Appointment = {
-    id: number
-    user_id: number
-    staff_id: number | null
-    appointment_date: string
-    appointment_time: string
-    status: string
-    total_price: string
-    secure_token: string
-    notes: string | null
-    created_at: string
-    updated_at: string
-    services: Service[]
-    promotions: Promotions[] // o define el tipo específico
-    packages: Packages[]   // idem
-}
-
 export type AppointmentsList = Appointment[];
 
 export interface Notification {
@@ -212,15 +196,42 @@ export interface Notification {
     read: boolean
     scheduled_at: string | Date
     sent_at: string | Date
+    created_at: string | Date
 }
 
-type PaginatedAppointments = {
-    data: Appointment[]; // Lista de citas
-    current_page: number;
-    last_page: number;
-    next_page_url?: string;
-    prev_page_url?: string;
-};
+export interface PaginatedAppointments {
+  current_page: number;
+  data: Appointment[];
+  from: number;
+  last_page: number;
+  next_page_url: string | null;
+  prev_page_url: string | null;
+  per_page: number;
+  to: number;
+  total: number;
+  links: {
+    url: string | null;
+    label: string;
+    active: boolean;
+  }[];
+}
+
+export interface PaginatedNotifications {
+  current_page: number;
+  data: Notification[];
+  from: number;
+  last_page: number;
+  next_page_url: string | null;
+  prev_page_url: string | null;
+  per_page: number;
+  to: number;
+  total: number;
+  links: {
+    url: string | null;
+    label: string;
+    active: boolean;
+  }[];
+}
 
 type DashboardPageProps = {
     new_clients_this_month: string;
@@ -237,23 +248,27 @@ type DashboardPageProps = {
         month: number;
         year: number;
     }[];
-    pending_appointments?: TodayAppointment[]; // Puedes tipar mejor si sabes la estructura
+    pending_appointments?: Appointment[]; // Puedes tipar mejor si sabes la estructura
 }
 
-export type TodayAppointment = {
-    id: number;
-    appointment_date: string; // ISO format
-    appointment_time: string; // HH:MM:SS
-    status: 'pending' | 'completed' | 'cancelled'; // puedes ajustar según tus estados
-    user_id: number;
-    staff_id: number;
-    total_price: string;
+export interface Appointment {
+    id: number
+    user_id: number
+    staff_id: number | null
+    appointment_date: string
+    appointment_time: string
+    status: string
+    total_price: string
+    secure_token: string
+    notes: string | null
+    created_at: string
+    updated_at: string
+    services: Service[]
+    promotions: Promotions[] // o define el tipo específico
+    packages: Packages[]   // idem
     user: {
-        id: number;
-        name: string;
-    };
-    staff: {
-        id: number;
-        name: string;
-    };
-};
+        name: string
+    }
+    staff: Staff
+   
+}

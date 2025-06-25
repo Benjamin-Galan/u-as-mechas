@@ -44,15 +44,13 @@ class Appointment extends Model
     public function promotions()
     {
         return $this->belongsToMany(Promotion::class, 'appointment_promotion')
-            ->withPivot(['price', 'discount_applied'])
-            ->withTimestamps();
+            ->with('services');
     }
 
     public function packages()
     {
         return $this->belongsToMany(Package::class, 'appointment_package')
-            ->withPivot(['price', 'discount_applied'])
-            ->withTimestamps();
+            ->with('services');
     }
 
     public function servicesWithDetails()

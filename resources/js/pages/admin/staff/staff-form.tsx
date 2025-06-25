@@ -1,8 +1,3 @@
-"use client"
-
-import type React from "react"
-
-import { useForm } from "@inertiajs/react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -10,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, Mail, Phone, Briefcase, UserCheck } from "lucide-react"
 import type { Staff } from "@/types"
+import { useStaffForm } from "@/hooks/useStaffForm"
 
 interface Props {
   staff?: Staff | null
@@ -17,27 +13,8 @@ interface Props {
 }
 
 export default function StaffForm({ staff, onSuccess }: Props) {
-  const isEdit = !!staff
-
-  const { data, setData, post, put, processing, errors } = useForm({
-    name: staff?.name ?? "",
-    email: staff?.email ?? "",
-    phone: staff?.phone ?? "",
-    position: staff?.position ?? "",
-    available: staff?.available ?? true,
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const routeName = isEdit ? "staff.update" : "staff.store"
-    const method = isEdit ? put : post
-    const url = isEdit ? route(routeName, staff!.id) : route(routeName)
-
-    method(url, {
-      onSuccess,
-    })
-  }
+  // Usamos el hook useStaffForm para manejar el formulario
+  const { data, setData, errors, processing, isEdit, handleSubmit } = useStaffForm(staff, onSuccess);
 
   return (
     <Card className="w-full max-w-2xl mx-auto">

@@ -10,7 +10,7 @@ export default function MapSection() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Título y descripción */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Nuestra Ubicación</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-zinc-600">Nuestra Ubicación</h2>
           <p className="text-gray-600 max-w-2xl mx-auto font-bold">
             Visítanos en nuestra ubicación central, fácil de encontrar y con amplio estacionamiento.
           </p>

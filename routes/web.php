@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StaffController;
 use App\Models\Category;
@@ -53,6 +54,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('admin/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
         Route::put('admin/appointments/{id}', [AppointmentController::class, 'update'])->name('appointments.update');
         Route::delete('admin/appointments/{id}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
+        Route::patch('/admin/appointments/{id}/status', [AppointmentController::class, 'changeStatus']);
+
+        Route::get('/admin/appointments/{id}/reschedule', [AppointmentController::class, 'show'])->name('appointments.show');
+        Route::patch('/admin/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule']);
+        Route::get('/admin/appointments/unavailable-hours', [AppointmentController::class, 'getUnavailableHours']);
+
+        Route::get('admin/reports', [ReportsController::class, 'index'])->name('reports');
     });
 
     Route::middleware(['role:cliente'])->group(function () {
@@ -60,8 +68,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return Inertia::render('client/dashboard');
         })->name('client.dashboard'); // Cambiar la ruta para que coincida con la estructura de carpetas
 
-        Route::get('client/services', [AppointmentController::class, 'index'])->name('services');
-        Route::post('client/appointments', [AppointmentController::class, 'store'])->name('services.store');
+        Route::get('client/services', [AppointmentController::class, 'index']);
+        Route::post('client/appointments', [AppointmentController::class, 'store']);
         Route::get('client/appointments', [AppointmentHistoryController::class, 'index'])->name('appointments');
 
         Route::get('client/notifications', [NotificationsController::class, 'index'])->name('client.notifications');

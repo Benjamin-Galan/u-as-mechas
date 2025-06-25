@@ -1,106 +1,52 @@
-import { CalendarIcon, Filter, Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+"use client"
 
-import SearchFilter from "@/components/search-filter";
+import { Filter } from "lucide-react"
+import SearchFilter from "@/components/search-filter"
+import SelectFilter from "@/components/select-filter"
 
-interface AppointmentFiltersProps {
-    onSearchChange: (value: string) => void;
-    // onStatusChange: (value: string) => void;
-    // onSortOrderChange: (value: string) => void;
-    // onDateChange: (date: Date | null) => void;
-    // selectedDate: Date | null;
+interface FiltersProps {
+  onSearchChange: (value: string) => void
+  onCategoryChange: (value: string) => void
+  onPriceOrderChange: (value: "asc" | "desc") => void
+  categories: { label: string; value: string }[]
 }
 
-
 export default function AppointmentFilters({
-    onSearchChange,
-    // onStatusChange,
-    // onSortOrderChange,
-    // onDateChange,
-    // selectedDate
-}: AppointmentFiltersProps) {
-    return (
-
-        <div className="p-6">
-            <div className="bg-white p-4 rounded-lg border space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                    <Filter className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Filtros</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {/* Búsqueda */}
-                    <SearchFilter
-                        onSearchChange={onSearchChange} 
-                        placeholder="Buscar servicios"
-                    />
-
-                    {/* Filtro por estado */}
-                    {/* <Select onValueChange={onStatusChange}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Estado" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Todos los estados</SelectItem>
-                            <SelectItem value="pending">Pendiente</SelectItem>
-                            <SelectItem value="confirmed">Confirmada</SelectItem>
-                            <SelectItem value="completed">Completada</SelectItem>
-                        </SelectContent>
-                    </Select> */}
-
-                    {/* Filtro por orden */}
-                    {/* <Select onValueChange={(val) => {
-                        onSortOrderChange(val === "asc" ? "asc" : "desc")
-                    }}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Orden" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="desc">Más reciente</SelectItem>
-                            <SelectItem value="asc">Más antigua</SelectItem>
-                        </SelectContent>
-                    </Select> */}
-
-                    {/* Filtro por tipo, cambiar por selector de fecha */}
-                    {/* <div className="flex flex-col gap-2">
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="justify-start text-left font-normal"
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {selectedDate ? format(selectedDate, "PPP") : <span>Seleccionar fecha</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={selectedDate}
-                                    onSelect={(date) => onDateChange(date)}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
-                        {selectedDate && (
-                            <Button
-                                variant="ghost"
-                                className="text-sm text-red-500 hover:underline p-0 self-start"
-                                onClick={() => onDateChange(null)}
-                            >
-                                <X className="h-4 w-4 mr-1" />
-                                Limpiar fecha
-                            </Button>
-                        )}
-                    </div> */}
-
-                </div>
-            </div>
+  onSearchChange,
+  onCategoryChange,
+  onPriceOrderChange,
+  categories,
+}: FiltersProps) {
+  return (
+    <div className="py-6">
+      <div className="bg-white dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+            <Filter className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filtros de Búsqueda</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Encuentra servicios específicos usando los filtros
+            </p>
+          </div>
         </div>
-    )
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <SearchFilter onSearchChange={onSearchChange} placeholder="Buscar servicios..." />
+
+          <SelectFilter options={categories} onValueChange={onCategoryChange} placeholder="Seleccionar categoría" />
+
+          <SelectFilter
+            options={[
+              { label: "Precio ascendente", value: "asc" },
+              { label: "Precio descendente", value: "desc" },
+            ]}
+            onValueChange={(value) => onPriceOrderChange(value as "asc" | "desc")}
+            placeholder="Ordenar por precio"
+          />
+        </div>
+      </div>
+    </div>
+  )
 }

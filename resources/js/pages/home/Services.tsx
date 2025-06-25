@@ -1,9 +1,7 @@
-"use client"
-
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import type { ServiceList } from "@/types"
+import { gotoRegister } from "@/utils/gotoRegister"
 
 interface ServicesProps {
   services: ServiceList
@@ -11,6 +9,8 @@ interface ServicesProps {
 
 export default function Services({ services }: ServicesProps) {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+  const [visibleCount, setVisibleCount] = useState(3);
+  const { handleNavigate } = gotoRegister()
 
   return (
     <section className="py-20 bg-gradient-to-b from-beauty-light to-white relative">
@@ -35,7 +35,7 @@ export default function Services({ services }: ServicesProps) {
 
         {/* Grid de servicios con diseño mejorado */}
         <div className="space-y-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-8 sm:space-y-0">
-          {services.map((servicio) => (
+          {services.slice(0, visibleCount).map((servicio) => (
             <div
               key={servicio.id}
               className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex sm:flex-col"
@@ -47,9 +47,8 @@ export default function Services({ services }: ServicesProps) {
                 <img
                   src={`/storage/services/${servicio.image}`}
                   alt={servicio.name}
-                  className={`w-full h-full object-cover transition-transform duration-700 ${
-                    hoveredCard === servicio.id ? "scale-110" : "scale-100"
-                  }`}
+                  className={`w-full h-full object-cover transition-transform duration-700 ${hoveredCard === servicio.id ? "scale-110" : "scale-100"
+                    }`}
                 />
               </div>
 
@@ -68,35 +67,28 @@ export default function Services({ services }: ServicesProps) {
                     variant="outline"
                     size="sm"
                     className="border-beauty-medium text-beauty-deep hover:bg-beauty-medium hover:text-white transition-colors duration-300 rounded-full px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                    onClick={() => alert(`Reservando ${servicio.name}`)}
+                    onClick={handleNavigate}
                   >
                     Reservar
                   </Button>
                 </div>
-              </div>
-
-              {/* Badge decorativo */}
-              <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
-                <Badge
-                  variant="secondary"
-                  className="bg-white/80 backdrop-blur-sm text-beauty-deep hover:bg-white/80 px-2 py-1 rounded-full text-xs font-medium"
-                >
-                  Popular
-                </Badge>
               </div>
             </div>
           ))}
         </div>
 
         {/* Botón "Ver todos los servicios" */}
-        <div className="flex justify-center mt-12">
-          <Button
-            variant="outline"
-            className="border-beauty-medium text-beauty-deep hover:bg-beauty-medium hover:text-white transition-colors duration-300 px-8 py-3 rounded-full"
-          >
-            Ver todos los servicios
-          </Button>
-        </div>
+        {visibleCount < services.length && (
+          <div className="flex justify-center mt-12">
+            <Button
+              variant="outline"
+              className="border-beauty-medium text-beauty-deep hover:bg-beauty-medium hover:text-white transition-colors duration-300 px-8 py-3 rounded-full"
+              onClick={() => setVisibleCount(visibleCount + 3)}
+            >
+              Ver más
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   )

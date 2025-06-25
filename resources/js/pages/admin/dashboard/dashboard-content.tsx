@@ -3,7 +3,7 @@ import { BarChart3, Calendar, DollarSign, Users } from "lucide-react"
 import { StatusPieChart } from "./status-pie-chart"
 import { RevenueChart } from "./renevue-chart"
 import { AppointmentsTable } from "./appointments-table"
-import { TodayAppointment } from "@/types"
+import { Appointment } from "@/types"
 
 interface DashboardPageProps {
     newClientsThisMonth: string
@@ -20,7 +20,7 @@ interface DashboardPageProps {
         month: number
         year: number
     }[]
-    pendingAppointments?: TodayAppointment[]
+    pendingAppointments?: Appointment[]
 }
 
 export function DashboardContent({
@@ -29,19 +29,15 @@ export function DashboardContent({
     monthlyRevenue,
     statusPercentage,
     monthlyEarnings,
-    pendingAppointments
+    pendingAppointments,
 }: DashboardPageProps) {
-
     const pieChartData = [
-        { name: "Completadas", value: statusPercentage?.completed, color: "#10b981" },
-        { name: "Canceladas", value: statusPercentage?.cancelled, color: "#ef4444" },
-        { name: "Pendientes", value: statusPercentage?.pending, color: "#f59e0b" },
+        { name: "Completadas", value: statusPercentage?.completed ?? 0, color: "#10b981" },
+        { name: "Canceladas", value: statusPercentage?.cancelled ?? 0, color: "#ef4444" },
+        { name: "Pendientes", value: statusPercentage?.pending ?? 0, color: "#f59e0b" },
     ]
 
-    const monthNames = [
-        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-    ]
+    const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 
     function getMonthName(index: number): string {
         return monthNames[index]
@@ -58,7 +54,6 @@ export function DashboardContent({
         const month = (currentMonth - i + 12) % 12
         const year = currentMonth - i < 0 ? currentYear - 1 : currentYear
 
-        //Buscar si hay datos para este mes
         const earningsItem = monthlyEarnings?.find(
             (item) => item.month === month + 1 && item.year === year
         )
@@ -70,6 +65,11 @@ export function DashboardContent({
         })
     }
 
+    const revenueFormatted = new Intl.NumberFormat("es-NI", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+    }).format(parseFloat(monthlyRevenue))
 
     return (
         <div className="space-y-6">
@@ -77,7 +77,7 @@ export function DashboardContent({
                 <StatsCard
                     title="Nuevos Usuarios"
                     value={newClientsThisMonth}
-                    icon={<Users className="h-5 w-5" />}
+                    icon={<Users className="h-5 w-5" aria-hidden="true" />}
                     change={12}
                     changeText="Este mes"
                 />
@@ -85,29 +85,33 @@ export function DashboardContent({
                 <StatsCard
                     title="Citas Totales"
                     value={totalAppointments}
-                    icon={<Calendar className="h-5 w-5" />}
+                    icon={<Calendar className="h-5 w-5" aria-hidden="true" />}
                     change={8}
-                    changeText="desde el mes pasado"
+                    changeText="Desde el mes pasado"
                 />
+
                 <StatsCard
                     title="Ingresos del Mes"
-                    value={`$${Number.parseFloat(monthlyRevenue).toFixed(2)}`}
-                    icon={<DollarSign className="h-5 w-5" />}
+                    value={revenueFormatted}
+                    icon={<DollarSign className="h-5 w-5" aria-hidden="true" />}
                     change={5}
-                    changeText="desde el mes pasado"
+                    changeText="Desde el mes pasado"
                 />
+
                 <StatsCard
                     title="Tasa de Completadas"
-                    value={`${statusPercentage?.completed}%`}
-                    icon={<BarChart3 className="h-5 w-5" />}
+                    value={statusPercentage?.completed !== undefined ? `${statusPercentage.completed}%` : "0%"}
+                    icon={<BarChart3 className="h-5 w-5" aria-hidden="true" />}
                     change={-3}
-                    changeText="desde el mes pasado"
+                    changeText="Desde el mes pasado"
                 />
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-                <StatusPieChart data={pieChartData} sum={statusPercentage?.sum} />
-                <RevenueChart data={chartData}  />
+                <StatusPieChart data={pieChartData} sum={statusPercentage?.sum ?? 0} />
+                <div className="md:col-span-2">
+                    <RevenueChart data={chartData} />
+                </div>
             </div>
 
             <AppointmentsTable appointments={pendingAppointments ?? []} />

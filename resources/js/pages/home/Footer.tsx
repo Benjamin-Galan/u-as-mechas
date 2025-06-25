@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "@inertiajs/react"
 import { Facebook, Instagram, Twitter } from "lucide-react"
+import { gotoRegister } from "@/utils/gotoRegister"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
+  const { handleNavigate } = gotoRegister()
+
   return (
-    <footer className="border-t bg-gradient-to-b from-beauty-light to-white">
+    <footer className="p-4 bg-gradient-to-b from-beauty-light to-white">
       <div className="container mx-auto py-16">
         {/* Sección principal del footer */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -14,7 +17,7 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <img src="/logo.png" alt="" className="w-8" />
-              <span className="text-xl font-bold">Uñas&Mechas</span>
+              <span className="text-xl font-bold text-zinc-700">Uñas&Mechas</span>
             </div>
 
             <p className="text-gray-600 text-sm">
@@ -25,7 +28,7 @@ export default function Footer() {
               <Button
                 size="icon"
                 variant="outline"
-                className="w-8 h-8 rounded-full bg-gray-100 text-pink-500 hover:bg-beauty-medium hover:text-white border-0"
+                className="w-8 h-8 rounded-full text-pink-800 hover:bg-beauty-medium hover:text-white border-0"
                 asChild
               >
                 <a href="#" aria-label="Facebook">
@@ -35,7 +38,7 @@ export default function Footer() {
               <Button
                 size="icon"
                 variant="outline"
-                className="w-8 h-8 rounded-full bg-gray-100 text-purple-600 hover:bg-beauty-deep hover:text-white border-0"
+                className="w-8 h-8 rounded-full text-purple-800 hover:bg-beauty-deep hover:text-white border-0"
                 asChild
               >
                 <a href="#" aria-label="Instagram">
@@ -45,7 +48,7 @@ export default function Footer() {
               <Button
                 size="icon"
                 variant="outline"
-                className="w-8 h-8 rounded-full bg-gray-100 text-teal-500 hover:bg-beauty-muted hover:text-white border-0"
+                className="w-8 h-8 rounded-full text-teal-800 hover:bg-beauty-muted hover:text-white border-0"
                 asChild
               >
                 <a href="#" aria-label="Twitter">
@@ -60,32 +63,32 @@ export default function Footer() {
             <h3 className="text-base font-medium mb-4 text-gray-800">Enlaces rápidos</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
+                <Link href="#" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
                   Inicio
                 </Link>
               </li>
               <li>
-                <Link href="/servicios" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
+                <Link href="#servicios" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
                   Servicios
                 </Link>
               </li>
               <li>
-                <Link href="/paquetes" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
+                <Link href="#paquetes" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
                   Paquetes
                 </Link>
               </li>
               <li>
-                <Link href="/promociones" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
+                <Link href="#promociones" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
                   Promociones
                 </Link>
               </li>
               <li>
-                <Link href="/nosotros" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
+                <Link href="#nosotros" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
                   Nosotros
                 </Link>
               </li>
               <li>
-                <Link href="/contacto" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
+                <Link href="#contacto" className="text-gray-600 hover:text-beauty-medium transition-colors text-sm">
                   Contacto
                 </Link>
               </li>
@@ -135,20 +138,20 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex justify-between text-sm">
                 <span className="text-gray-600">Lunes - Viernes</span>
-                <span className="text-gray-800">9:00 AM - 8:00 PM</span>
+                <span className="text-gray-800">8:00 AM - 6:00 PM</span>
               </li>
               <li className="flex justify-between text-sm">
                 <span className="text-gray-600">Sábado</span>
-                <span className="text-gray-800">9:00 AM - 8:00 PM</span>
+                <span className="text-gray-800">8:00 AM - 6:00 PM</span>
               </li>
               <li className="flex justify-between text-sm">
                 <span className="text-gray-600">Domingo</span>
-                <span className="text-gray-800">10:00 AM - 6:00 PM</span>
+                <span className="text-gray-800">08:00 AM - 12:00 am</span>
               </li>
             </ul>
             <div className="mt-6">
               <Button asChild className="w-full bg-beauty-deep hover:bg-beauty-dark text-white rounded-full">
-                <Link href="/agendar">Agenda tu cita</Link>
+                <button onClick={handleNavigate}>Agenda tu cita</button>
               </Button>
             </div>
           </div>

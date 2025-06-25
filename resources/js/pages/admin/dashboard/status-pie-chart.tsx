@@ -13,8 +13,8 @@ interface StatusPieChartProps {
 }
 
 export function StatusPieChart({ data, sum }: StatusPieChartProps) {
-    return (
-        <Card className="col-span-1 border-indigo-200 dark:border-indigo-900 shadow-sm">
+    return ( 
+        <Card className="col-span-1 dark:bg-gray-800 shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-base font-medium">Estado de Citas</CardTitle>
             </CardHeader>

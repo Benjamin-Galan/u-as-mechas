@@ -10,7 +10,7 @@ interface PromotionsProps {
 
 export default function Promotion({ promotions }: PromotionsProps) {
   return (
-    <section className="py-20 overflow-hidden bg-gradient-to-b from-white to-beauty-light relative">
+    <section className="py-20 overflow-hidden bg-yellow-950 relative">
       {/* Elementos decorativos de fondo */}
       <div className="absolute inset-0 pointer-events-none opacity-10">
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-beauty-soft rounded-full blur-[120px]"></div>

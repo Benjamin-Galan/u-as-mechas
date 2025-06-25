@@ -10,18 +10,11 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Services\ServicesService;
-use Illuminate\Contracts\Cache\Store;
+use Illuminate\Support\Facades\Log;
 
 class ServiceController extends Controller
 {
     protected ServicesService $serviceService;
-    /**
-     * Create a new controller instance.
-     *
-     * @param ServicesService $serviceService
-     */
-
-    // Constructor para inyectar el servicio
 
     public function __construct(ServicesService $serviceService)
     {
@@ -34,7 +27,7 @@ class ServiceController extends Controller
     public function index()
     {
         return Inertia::render('admin/services/page', [
-            'services' => Service::all(),
+            'services' => Service::with('category')->get(),
             'categories' => Category::all()
         ]);
     }
@@ -44,15 +37,19 @@ class ServiceController extends Controller
      */
     public function store(ServiceRequest $request)
     {
-        //Validar los datos de la peticion
-        
-        $service = $this->serviceService->store($request->validated());
-
-        //Llamar al servicio para manejar la logica de creacion
-        return response()->json([
-            'message' => 'Servicio creado correctamente',
-            'service' => $service
-        ]);
+       
+        try {
+           
+            $this->serviceService->store($request->validated());
+            
+            return redirect()->back()->with('success', 'Servicio creado exitosamente');
+        } catch (\Exception $e) {
+            Log::error('Error creating service: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withErrors(['general' => 'Error al crear el servicio. Inténtalo de nuevo.'])
+                ->withInput();
+        }
     }
 
     /**
@@ -60,14 +57,20 @@ class ServiceController extends Controller
      */
     public function update(ServiceRequest $request, string $id)
     {
-        //Validar los datos de la peticion
-        $service = Service::findOrFail($id);
-        $updated = $this->serviceService->update($service, $request->validated());
+        // dd($request->all());
 
-        return response()->json([
-            'message' => 'Servicio actualizado correctamente',
-            'service' => $updated->load('category')
-        ]);
+        try {
+            $service = Service::findOrFail($id);
+            $this->serviceService->update($service, $request->validated());
+
+            return redirect()->back()->with('success', 'Servicio actualizado exitosamente');
+        } catch (\Exception $e) {
+            Log::error('Error updating service: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withErrors(['general' => 'Error al actualizar el servicio. Inténtalo de nuevo.'])
+                ->withInput();
+        }
     }
 
     /**
@@ -75,37 +78,40 @@ class ServiceController extends Controller
      */
     public function destroy(string $id)
     {
-        $service = Service::findOrFail($id);
-        $this->serviceService->destroy($service);
+        try {
+            $service = Service::findOrFail($id);
+            $this->serviceService->destroy($service);
 
-        return response()->json(['message' => 'Servicio eliminado']);
+            return redirect()->back()->with('success', 'Servicio eliminado exitosamente');
+        } catch (\Exception $e) {
+            Log::error('Error deleting service: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withErrors(['general' => 'Error al eliminar el servicio. Inténtalo de nuevo.']);
+        }
     }
 
     public function search(Request $request)
     {
         $query = Service::query();
 
-        // Buscar por nombre
         if ($request->filled('name')) {
             $query->where('name', 'LIKE', '%' . $request->name . '%');
         }
 
-        // Filtrar por categoría
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Filtrar por rango de precios
         if ($request->filled('min_price') && $request->filled('max_price')) {
             $query->whereBetween('price', [$request->min_price, $request->max_price]);
         }
 
-        // Filtrar por descuento mínimo
         if ($request->filled('min_discount')) {
             $query->where('discount', '>=', $request->min_discount);
         }
 
-        $services = $query->get();
+        $services = $query->with('category')->get();
 
         return response()->json($services);
     }

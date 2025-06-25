@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Events\AppointmentCreated;
+use App\Events\PromotionCreated;
+use App\Events\ServiceCreatedOrDiscounted;
+use App\Listeners\NotifyClientsAboutPromotion;
+use App\Listeners\NotifyClientsAboutService;
 use App\Listeners\StoreAdminNotification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -20,11 +24,17 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      */
-    public function boot(): void
-    {
-        Event::listen(
-            AppointmentCreated::class,
-            [StoreAdminNotification::class, 'handle']
-        );
-    }
+    protected $listen = [
+        AppointmentCreated::class => [
+            StoreAdminNotification::class,
+        ],
+
+        ServiceCreatedOrDiscounted::class => [
+            NotifyClientsAboutService::class,
+        ],
+
+        PromotionCreated::class => [
+            NotifyClientsAboutPromotion::class,
+        ]
+    ];
 }
