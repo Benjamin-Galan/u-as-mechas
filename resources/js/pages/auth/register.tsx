@@ -105,6 +105,13 @@ export default function Register() {
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Registrarse
                     </Button>
+
+                    <a href={route('google.login')} className="mt-4 w-full">
+                        <Button type="button" variant="link" className="w-full" disabled={processing}>
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            Registrarse con Google
+                        </Button>
+                    </a>
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">

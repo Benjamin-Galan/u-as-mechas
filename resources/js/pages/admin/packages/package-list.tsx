@@ -65,7 +65,7 @@ export default function PackageList({ allPackages, onEdit, onDelete }: Props) {
                                 <div className="flex items-center gap-2">
                                     <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{pkg.total} C$</span>
                                 </div>
-                                {pkg.discount > 0 && (
+                                {/* {pkg.discount > 0 && (
                                     <div className="flex items-center gap-1">
                                         <Tag className="h-4 w-4 text-pink-600 dark:text-pink-400" />
                                         <Badge
@@ -76,7 +76,7 @@ export default function PackageList({ allPackages, onEdit, onDelete }: Props) {
                                             -{pkg.discount}% OFF
                                         </Badge>
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
 

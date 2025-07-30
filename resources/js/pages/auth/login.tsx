@@ -94,6 +94,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Iniciar sesión
                     </Button>
+
+                    <a href={route('google.login')} className="mt-4 w-full">
+                        <Button type="button" variant="link" className="w-full" disabled={processing}>
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            Inicia sesión con Google
+                        </Button>
+                    </a>
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">

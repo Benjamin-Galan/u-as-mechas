@@ -47,8 +47,8 @@ export default function PackagesPage() {
         <HeaderContent
           titleIcon={<Gift className="w-6 h-6 text-purple-600" />}
           buttonIcon={<Plus className="w-4 h-4" />}
-          section="Promociones"
-          article="todas las"
+          section="Paquetes"
+          article="todos los"
           onOpenModal={() => setPackageModal(true)}
         />
 

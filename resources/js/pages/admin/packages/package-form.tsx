@@ -27,9 +27,20 @@ export function PackageForm ({services, currentPackage, onClose}: Props) {
         services: currentPackage?.services ?? []
     })
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+
+        console.log('Enviando...')
+    }
+
     return (
         <form action="">
-            Hola
+            <div className="space-y-2">
+                <Label>Nombre del paquete</Label>
+                <Input 
+                    name=""
+                />
+            </div>
         </form>
     )
 }
