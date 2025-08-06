@@ -56,11 +56,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('admin/appointments/{id}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
         Route::patch('/admin/appointments/{id}/status', [AppointmentController::class, 'changeStatus']);
 
+        Route::get('admin/appointments/{id}/details', [AppointmentController::class, 'details'])->name('appointments.details');
+
         Route::get('/admin/appointments/{id}/reschedule', [AppointmentController::class, 'show'])->name('appointments.show');
         Route::patch('/admin/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule']);
         Route::get('/admin/appointments/unavailable-hours', [AppointmentController::class, 'getUnavailableHours']);
 
-        Route::get('admin/reports', [ReportsController::class, 'index'])->name('reports');
+        Route::get('/admin/reports', [ReportsController::class, 'index'])->name('reports');
     });
 
     Route::middleware(['role:cliente'])->group(function () {

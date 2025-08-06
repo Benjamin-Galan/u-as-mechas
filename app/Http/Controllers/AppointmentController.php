@@ -35,10 +35,10 @@ class AppointmentController extends Controller
             'packages' => Package::with('services')->get(),
             'appointments' => Appointment::with(['services', 'promotions', 'packages'])
                 ->where('user_id', $userId)
+                ->orderBy('appointment_date', 'desc')
                 ->get()
         ]);
     }
-
 
     public function store(AppointmentRequest $request)
     {
@@ -78,6 +78,16 @@ class AppointmentController extends Controller
             'appointment' => $appointment,
         ]);
     }
+
+    public function details(string $id)
+    {
+        $appointment = $this->appointmentService->getAppointmentDetailsForAdmin((int) $id);
+
+        return Inertia::render('admin/appointments/details', [
+            'appointment' => $appointment,
+        ]);
+    }
+
 
     public function admin(Request $request)
     {
@@ -136,11 +146,10 @@ class AppointmentController extends Controller
         ]);
 
         $date = $request->input('date');
-
-        $unavailableHours = $this->appointmentService->getUnavailableHours($date);
+        $hours = $this->appointmentService->getUnavailableHours($date);
 
         return response()->json([
-            'unavailable_hours' => $unavailableHours,
+            'unavailable_hours' => $hours,
         ]);
     }
 }

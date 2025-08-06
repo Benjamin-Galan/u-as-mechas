@@ -1,21 +1,23 @@
 "use client"
 
-import type { PaginatedAppointments } from "@/types"
+import type { Appointment, PaginatedAppointments } from "@/types"
 import { router } from "@inertiajs/react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getStatusBadge } from "@/utils/getStatusBagde"
 import { OptionsMenu } from "./options-menu"
 import { formatDate } from "@/utils/format-date"
-import { Calendar, Clock, UserCheck, ChevronLeft, ChevronRight, List } from "lucide-react"
+import { Calendar, Clock, UserCheck, ChevronLeft, ChevronRight } from "lucide-react"
 import ListHeader from "./list-header"
 import { Button } from "@/components/ui/button"
 
 interface AppointmentProps {
   appointments: PaginatedAppointments
+  onDelete: (appointment: Appointment) => void
+  onEdit: (appointment: Appointment) => void
 }
 
-export function AppointmentList({ appointments }: AppointmentProps) {
+export function AppointmentList({ appointments, onDelete, onEdit }: AppointmentProps) {
   return (
     <Card className="shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50">
       <CardHeader className="pb-4">
@@ -55,7 +57,7 @@ export function AppointmentList({ appointments }: AppointmentProps) {
                   </TableCell>
                 </TableRow>
               ) : (
-                appointments.data.map((appointment, index) => (
+                appointments.data.map((appointment) => (
                   <TableRow
                     key={appointment.id}
                     className="border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200"
@@ -101,9 +103,7 @@ export function AppointmentList({ appointments }: AppointmentProps) {
                       </div>
                     </TableCell>
                     <TableCell className="p-4">
-                      <div className="flex justify-center">
-                        <OptionsMenu appointment={appointment} />
-                      </div>
+                      <OptionsMenu appointment={appointment} onDelete={onDelete} onEdit={onEdit} />
                     </TableCell>
                   </TableRow>
                 ))

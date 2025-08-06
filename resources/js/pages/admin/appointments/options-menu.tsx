@@ -1,117 +1,69 @@
+import { useState } from "react";
+import { Appointment } from "@/types";
+import { MoreVertical, Pencil, Trash } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
+
 interface OptionsMenuProps {
-  appointment: Appointment
+  appointment: Appointment;
+  onEdit: (appointment: Appointment) => void;
+  onDelete: (appointment: Appointment) => void;
 }
 
-import { CheckCircle, Eye, Pencil, Trash } from "lucide-react";
-import { useState } from "react";
-import { router } from "@inertiajs/react";
-import { ConfirmModal } from "./confirm-modal";
-import { DetailsModal } from "./details-modal"
-import { RescheduleModal } from "./reschedule-modal";
-import { toast } from "sonner";
-import { Appointment } from "@/types";
-import { CancelModal } from "./cancel-modal";
-
-export function OptionsMenu({ appointment }: OptionsMenuProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-
-  const handleConfirm = () => {
-    router.patch(`/admin/appointments/${appointment.id}/status`, {
-      status: 'confirmed',
-    }, {
-      onSuccess: () => {
-        toast.success("Cita confirmada correctamente." );
-        setModalOpen(false);
-      },
-      onError: () => {
-        toast.error("Error al confirmar cita.");
-      },
-      preserveScroll: true,
-    });
-  };
-
-  const handleCancel = () => {
-    router.patch(`/admin/appointments/${appointment.id}/status`, {
-      status: 'cancelled',
-    }, {
-      onSuccess: () => {
-        toast.success("Cita cancelada correctamente." );
-        setCancelModalOpen(false);
-      },
-      onError: () => {
-        toast.error("Error al cancelar la cita.");
-      },
-      preserveScroll: true,
-    });
-  };
-
-  const handleReschedule = (date: string, time: string) => {
-    router.patch(`/admin/appointments/${appointment.id}/reschedule`, {
-      appointment_date: date,
-      appointment_time: time,
-    }, {
-      onSuccess: () => {
-        toast.success("Cita reagendada correctamente." );
-        setRescheduleModalOpen(false);
-      },
-      onError: () => {
-        toast.error("Error al reagendar cita.");
-      },
-      preserveScroll: true,
-    });
-  };
-
+export function OptionsMenu({
+  appointment,
+  onEdit,
+  onDelete,
+}: OptionsMenuProps) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <>
-      <div className="flex justify-between">
-        <Eye
-          className="stroke-blue-700 hover:stroke-blue-300 dark:stroke-blue-300 hover:bg-zinc-700 cursor-pointer p-1 rounded-sm shadow-sm"
-          onClick={() => setDetailsModalOpen(true)}
-        />
-        <Pencil
-          className="stroke-zinc-700 hover:stroke-zinc-300 dark:stroke-zinc-200 hover:bg-zinc-700 cursor-pointer p-1 rounded-sm shadow-sm"
-          onClick={() => setRescheduleModalOpen(true)}
-        />
-        <Trash
-          className="stroke-red-700 hover:stroke-red-300 dark:stroke-red-400 hover:bg-zinc-700 cursor-pointer p-1 rounded-sm shadow-sm" 
-          onClick={() => setCancelModalOpen(true)}
-        />
-        <CheckCircle
-          className="stroke-lime-800 hover:stroke-lime-300 dark:stroke-lime-300 hover:bg-zinc-700 cursor-pointer p-1 rounded-sm shadow-sm"
-          onClick={() => setModalOpen(true)}
-        />
-      </div>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          aria-label="Opciones"
+        >
+          <MoreVertical className="w-4 h-4 text-zinc-600 dark:text-zinc-300" />
+        </button>
+      </DropdownMenuTrigger>
 
-      <ConfirmModal
-        open={modalOpen}
-        onCancel={() => setModalOpen(false)}
-        onConfirm={handleConfirm}
-        isAlreadyConfirmed={appointment.status === "confirmed"}
-      />
+      <DropdownMenuContent
+        className="flex flex-col w-44 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden"
+        sideOffset={4}
+      >
+        {/* Detalles */}
+        <DropdownMenuItem asChild className="w-full">
+          <button
+            className="flex items-center w-full px-3 py-2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            onClick={() => {
+              setOpen(false);
+              setTimeout(() => onEdit(appointment), 100);
+            }}
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            Detalles
+          </button>
+        </DropdownMenuItem>
 
-      <CancelModal
-        open={cancelModalOpen}
-        onCancel={() => setCancelModalOpen(false)}
-        onConfirm={handleCancel}
-        isAlreadyConfirmed={appointment.status === "cancelled"}
-      />
-
-      <RescheduleModal
-        open={rescheduleModalOpen}
-        onCancel={() => setRescheduleModalOpen(false)}
-        onConfirm={handleReschedule}
-        isAlreadyCompleted={appointment.status === "completed"}
-      />
-
-      <DetailsModal
-        open={detailsModalOpen}
-        onCancel={() => setDetailsModalOpen(false)}
-        appointments={appointment!}
-      />
-    </>
+        {/* Eliminar */}
+        <DropdownMenuItem asChild className="w-full">
+          <button
+            className="flex items-center w-full px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+            onClick={() => {
+              setOpen(false);
+              onDelete(appointment);
+            }}
+          >
+            <Trash className="mr-2 h-4 w-4" />
+            Eliminar
+          </button>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

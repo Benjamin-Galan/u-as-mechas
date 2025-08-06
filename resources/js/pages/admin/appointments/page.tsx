@@ -4,50 +4,33 @@
 import { Head, usePage } from "@inertiajs/react"
 import type { BreadcrumbItem, PaginatedAppointments } from "@/types"
 import AppLayout from "@/layouts/app-layout"
+import { router } from "@inertiajs/react";
 import { AppointmentList } from "./appointment-list"
-import { useEffect, useMemo, useState } from "react"
 import AppointmentFilters from "./appointment-filters"
-import { echo } from "@/echo"
-import { toast } from "sonner"
-import { Calendar, Users, Clock, TrendingUp } from "lucide-react"
+import { ConfirmModal } from "./confirm-modal";
+import { DetailsModal } from "./details-modal"
+import { RescheduleModal } from "./reschedule-modal";
+import { CancelModal } from "./cancel-modal";
+import { useState } from "react"
+import { useAppointmentManager } from "@/hooks/useAppointmentManager";
+import { ConfirmDialog } from "@/components/confirm-delete-dialog";
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: "Dashboard", href: "/admin/dashboard" },
   { title: "Citas", href: "/admin/appointments" },
 ]
 
 export default function AdminAppointments() {
-  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [modalOpen, setModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const { appointments } = usePage().props as {
     appointments?: PaginatedAppointments
   }
+  const { confirmDelete, handleDelete, handleDetails, isDialogOpen, setIsDialogOpen, appointmentToDelete } = useAppointmentManager();
 
-  useEffect(() => {
-    echo.private("admin.notifications").listen("AppointmentCreated", (e: Notification) => {
-      toast("Tienes una nueva cita", {
-        action: {
-          label: "Ver Notificaciones",
-          onClick: () => console.log("Undo"),
-        },
-      })
-      setNotifications((prev) => [e, ...prev])
-    })
-
-    return () => {
-      echo.leave("admin.notifications")
-    }
-  }, [])
-
-  const stats = useMemo(() => {
-    if (!appointments?.data) return { total: 0, pending: 0, confirmed: 0, completed: 0 }
-
-    const total = appointments.data.length
-    const pending = appointments.data.filter((apt) => apt.status === "pending").length
-    const confirmed = appointments.data.filter((apt) => apt.status === "confirmed").length
-    const completed = appointments.data.filter((apt) => apt.status === "completed").length
-
-    return { total, pending, confirmed, completed }
-  }, [appointments])
+  console.log('citas', appointments?.data);
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -57,7 +40,43 @@ export default function AdminAppointments() {
         <AppointmentFilters />
 
         {/* Appointments List */}
-        <AppointmentList appointments={appointments!} />
+        <AppointmentList appointments={appointments!} onDelete={confirmDelete} onEdit={handleDetails}/>
+
+        {/* <ConfirmModal
+          open={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          onConfirm={confirmDelete}
+          isAlreadyConfirmed={appointment.status === "confirmed"}
+        /> */}
+
+        {/* <CancelModal
+          open={cancelModalOpen}
+          onCancel={() => setCancelModalOpen(false)}
+          onConfirm={handleCancel}
+          isAlreadyConfirmed={appointment.status === "cancelled"}
+        /> */}
+
+        <ConfirmDialog
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onConfirm={handleDelete}
+          title="¿Eliminar servicio?"
+          description={`¿Estás seguro de que deseas eliminar el servicio ${appointmentToDelete?.id}? Esta acción no se puede deshacer.`}
+          confirmText="Sí, eliminar"
+        />
+
+        {/* <RescheduleModal
+          open={rescheduleModalOpen}
+          onCancel={() => setRescheduleModalOpen(false)}
+          onConfirm={handleReschedule}
+          isAlreadyCompleted={appointment.status === "completed"}
+        />
+
+        <DetailsModal
+          open={detailsModalOpen}
+          onCancel={() => setDetailsModalOpen(false)}
+          appointments={appointment!}
+        /> */}
 
       </div>
     </AppLayout>

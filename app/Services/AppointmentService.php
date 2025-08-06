@@ -175,6 +175,15 @@ class AppointmentService
         return $appointment;
     }
 
+    //Función que devuelve los detalles de una cita para el admin
+    public function getAppointmentDetailsForAdmin(int $appointmentId): Appointment
+    {
+        return Appointment::with(['services', 'promotions', 'packages', 'staff', 'user'])
+            ->where('id', $appointmentId)
+            ->firstOrFail();
+    }
+
+
     //Funcion que reagenda la cita desde el admin
     public function reschedule(Appointment $appointment, array $data): void
     {
@@ -184,12 +193,17 @@ class AppointmentService
         ]);
     }
 
+    //Funcion que devuelve las horas no disponibles para una fecha dada y su estado
     public function getUnavailableHours(string $date): array
     {
         return Appointment::whereDate('appointment_date', $date)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->pluck('appointment_time')
-            ->map(fn($time) => \Carbon\Carbon::createFromFormat('H:i:s', $time)->format('H:i'))
+            ->get(['appointment_time', 'status'])
+            ->map(function ($appointment) {
+                return [
+                    'hour' => \Carbon\Carbon::createFromFormat('H:i:s', $appointment->appointment_time)->format('H:i'),
+                    'status' => $appointment->status,
+                ];
+            })
             ->toArray();
     }
 }

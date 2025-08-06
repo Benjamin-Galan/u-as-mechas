@@ -1,4 +1,4 @@
-import { LayoutGrid, NotebookPen, Scissors, Percent, Gift, Users, BellRing, BookCopy } from "lucide-react";
+import { LayoutGrid, NotebookPen, Scissors, Percent, Gift, Users, BellRing } from "lucide-react";
 import type { NavItem } from "@/types";
 
 export function getMainNavItemsByRole(role: 'admin' | 'cliente'): NavItem[] {
@@ -10,6 +10,7 @@ export function getMainNavItemsByRole(role: 'admin' | 'cliente'): NavItem[] {
         { title: "Paquetes", href: "/packages", icon: Gift },
         { title: "Personal", href: "/staff", icon: Users },
         { title: "Notificaciones", href: "/admin/notifications", icon: BellRing },
+        { title: "Reportes", href: "/admin/reports", icon: BellRing },
     ]
 
     const client: NavItem[] = [

@@ -29,6 +29,8 @@ export function AppointmentsTable({ appointments, onViewDetails }: AppointmentsT
     statusStyles[status] ?? "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
   const getStatusText = (status: string) => statusTexts[status] ?? status
 
+  console.log("Citas del día:", appointments)
+
   const formatter = new Intl.NumberFormat("es-NI", {
     style: "currency",
     currency: "NIO",

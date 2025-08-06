@@ -14,7 +14,6 @@ import { ProductsCard } from './schedule/product-card';
 import { CartSummary } from './schedule/cart-summary';
 import { DatetimePicker } from './schedule/datetime-picker'
 import { AppointmentSummary } from './schedule/appointment-summary';
-import { AppointmentStatus } from './schedule/appointment-status';
 
 import axios from 'axios';
 

@@ -72,7 +72,7 @@ class StatsService
 
     public function pendingAppointmentsToday()
     {
-        return Appointment::where('status', 'confirmed')
+        return Appointment::where('status', 'pending')
             ->whereDate('appointment_date', now()->toDateString())
             ->select(['id', 'appointment_date', 'appointment_time', 'total_price', 'status', 'user_id', 'staff_id'])
             ->with(['user:id,name', 'staff:id,name'])

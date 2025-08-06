@@ -1,7 +1,7 @@
 import type { Service } from "@/types"
 import { CreateNew } from "./create-new"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Clock, DollarSign } from "lucide-react"
+import { Clock } from "lucide-react"
 import ServiceOptions from "./service-options"
 import { Badge } from "@/components/ui/badge"
 
