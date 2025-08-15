@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAppointmentController;
 use App\Http\Controllers\AdminNotificationsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientAppointmentController;
+use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationsController;
@@ -86,9 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::middleware(['role:cliente'])->group(function () {
-        Route::get('client/dashboard', function () {
-            return Inertia::render('client/dashboard');
-        })->name('client.dashboard'); // Cambiar la ruta para que coincida con la estructura de carpetas
+        Route::get('client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard'); // Cambiar la ruta para que coincida con la estructura de carpetas
 
         Route::get('client/services', [ClientAppointmentController::class, 'index']);
 
