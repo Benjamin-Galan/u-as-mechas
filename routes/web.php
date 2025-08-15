@@ -92,7 +92,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('client/services', [ClientAppointmentController::class, 'index']);
 
         Route::get('client/appointments', [ClientAppointmentController::class, 'show'])->name('appointments');
-        Route::post('client/appointments', [ClientAppointmentController::class, 'store']);
+        Route::get('client/appointments', [ClientAppointmentController::class, 'show'])->name('client.appointments');
 
         Route::get('client/notifications', [NotificationsController::class, 'index'])->name('client.notifications');
         Route::delete('client/notifications/{id}', [NotificationsController::class, 'destroy'])
