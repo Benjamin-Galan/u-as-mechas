@@ -2,9 +2,8 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Head, usePage } from "@inertiajs/react"
-import type { BreadcrumbItem, PaginatedAppointments } from "@/types"
+import type { Appointment, BreadcrumbItem, PaginatedAppointments } from "@/types"
 import AppLayout from "@/layouts/app-layout"
-import { router } from "@inertiajs/react";
 import { AppointmentList } from "./appointment-list"
 import AppointmentFilters from "./appointment-filters"
 import { ConfirmModal } from "./confirm-modal";
@@ -21,16 +20,32 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminAppointments() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [appointmentToConfirm, setAppointmentToConfirm] = useState<Appointment | null>(null);
+  const [appointmentToCancel, setAppointmentToCancel] = useState<Appointment | null>(null);
   const { appointments } = usePage().props as {
     appointments?: PaginatedAppointments
   }
-  const { confirmDelete, handleDelete, handleDetails, isDialogOpen, setIsDialogOpen, appointmentToDelete } = useAppointmentManager();
+  const {
+    confirmDelete,
+    handleDelete,
+    handleDetails,
+    isDialogOpen,
+    setIsDialogOpen,
+    appointmentToDelete,
+    handleConfirm,
+    handleCancel
+  } = useAppointmentManager();
 
-  console.log('citas', appointments?.data);
+  function confirmAppointment(appointment: Appointment) {
+    setAppointmentToConfirm(appointment);
+    setModalOpen(true);
+  }
+
+  function cancelAppointment(appointment: Appointment) {
+    setAppointmentToCancel(appointment);
+    setCancelModalOpen(true);
+  }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -40,21 +55,37 @@ export default function AdminAppointments() {
         <AppointmentFilters />
 
         {/* Appointments List */}
-        <AppointmentList appointments={appointments!} onDelete={confirmDelete} onEdit={handleDetails}/>
+        <AppointmentList
+          appointments={appointments!}
+          onDelete={confirmDelete}
+          onEdit={handleDetails}
+          onConfirm={confirmAppointment}
+          onCancel={cancelAppointment}
+        />
 
-        {/* <ConfirmModal
+        <ConfirmModal
           open={modalOpen}
           onCancel={() => setModalOpen(false)}
-          onConfirm={confirmDelete}
-          isAlreadyConfirmed={appointment.status === "confirmed"}
-        /> */}
+          onConfirm={() => {
+            if (appointmentToConfirm) {
+              handleConfirm(appointmentToConfirm);
+              setModalOpen(false);
+            }
+          }}
+          isAlreadyConfirmed={appointmentToConfirm?.status === "confirmed"}
+        />
 
-        {/* <CancelModal
+        <CancelModal
           open={cancelModalOpen}
           onCancel={() => setCancelModalOpen(false)}
-          onConfirm={handleCancel}
-          isAlreadyConfirmed={appointment.status === "cancelled"}
-        /> */}
+          onConfirm={() => {
+            if (appointmentToCancel) {
+              handleCancel(appointmentToCancel);
+              setCancelModalOpen(false);
+            }
+          }}
+          isAlreadyConfirmed={appointmentToConfirm?.status === "cancelled"}
+        />
 
         <ConfirmDialog
           open={isDialogOpen}
@@ -64,20 +95,6 @@ export default function AdminAppointments() {
           description={`¿Estás seguro de que deseas eliminar el servicio ${appointmentToDelete?.id}? Esta acción no se puede deshacer.`}
           confirmText="Sí, eliminar"
         />
-
-        {/* <RescheduleModal
-          open={rescheduleModalOpen}
-          onCancel={() => setRescheduleModalOpen(false)}
-          onConfirm={handleReschedule}
-          isAlreadyCompleted={appointment.status === "completed"}
-        />
-
-        <DetailsModal
-          open={detailsModalOpen}
-          onCancel={() => setDetailsModalOpen(false)}
-          appointments={appointment!}
-        /> */}
-
       </div>
     </AppLayout>
   )

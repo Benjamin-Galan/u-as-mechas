@@ -29,7 +29,7 @@ export function usePackageManager() {
     const handleDelete = () => {
         if (!packageToDelete) return
 
-        router.delete(route('package.destroy', packageToDelete.id), {
+        router.delete(route('packages.destroy', packageToDelete.id), {
             onSuccess: () => {
                 toast.message(`El paquete ${packageToDelete.name} ha sido eliminado exitosamente.`)
                 setDeleteDialog(false)

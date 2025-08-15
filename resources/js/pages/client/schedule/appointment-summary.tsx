@@ -59,8 +59,8 @@ export function AppointmentSummary({
                     <div className="flex items-center gap-3">
                         <MapPin className="w-5 h-5 text-primary" />
                         <div>
-                            <p className="font-medium">Salón de Belleza</p>
-                            <p className="text-sm text-muted-foreground">Dirección del salón</p>
+                            <p className="font-medium">Uñas & Mechas</p>
+                            <p className="text-sm text-muted-foreground">Portón sur, Multicentro Las Americas, 50 metros abajo, Managua</p>
                         </div>
                     </div>
                 </CardContent>
@@ -115,7 +115,7 @@ export function AppointmentSummary({
                             <CreditCard className="w-5 h-5" />
                             Total a pagar:
                         </div>
-                        <span className="text-primary">${total.toFixed(2)}</span>
+                        <span className="text-primary">C$ {total.toFixed(2)}</span>
                     </div>
                 </CardContent>
             </Card>

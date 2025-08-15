@@ -1,9 +1,9 @@
-import type { Category, ServiceList } from "@/types"
+import type { Category, PaginatedService } from "@/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Package, Tag, Percent, DollarSign } from "lucide-react"
 
 interface ServiceStatsProps {
-  services: ServiceList
+  services: PaginatedService
   categories?: Category[]
 }
 
@@ -11,7 +11,7 @@ export default function ServiceStats({ services, categories }: ServiceStatsProps
   const stats = [
     {
       title: "Total Servicios",
-      value: services.length,
+      value: services.data.length,
       icon: Package,
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-100 dark:bg-blue-900/20",
@@ -25,14 +25,14 @@ export default function ServiceStats({ services, categories }: ServiceStatsProps
     },
     {
       title: "Con Descuento",
-      value: services.filter((s) => Number.parseFloat(s.discount || "0") > 0).length,
+      value: services.data.filter((s) => Number.parseFloat(s.discount || "0") > 0).length,
       icon: Percent,
       color: "text-red-600 dark:text-red-400",
       bgColor: "bg-red-100 dark:bg-red-900/20",
     },
     {
       title: "Precio Promedio",
-      value: `${(services.reduce((acc, s) => acc + Number.parseFloat(s.price), 0) / services.length || 0).toFixed(0)} C$`,
+      value: `${(services.data.reduce((acc, s) => acc + Number.parseFloat(s.price), 0) / services.data.length || 0).toFixed(0)} C$`,
       icon: DollarSign,
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-100 dark:bg-purple-900/20",

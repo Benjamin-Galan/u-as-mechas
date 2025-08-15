@@ -13,7 +13,7 @@ interface Props {
 export default function StaffModal({ open, onClose, staff }: Props) {
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>{staff ? 'Editar miembro' : 'Nuevo miembro'}</DialogTitle>
                 </DialogHeader>

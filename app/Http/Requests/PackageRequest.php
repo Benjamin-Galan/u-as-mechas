@@ -26,7 +26,7 @@ class PackageRequest extends FormRequest
             'description' => 'required|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'discount' => 'required|numeric|min:0',
-            'services' => 'nullable|string', // Como viene JSON stringificado
+            'services' => 'nullable|array', // Como viene JSON stringificado
         ];
     }
 }

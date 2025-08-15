@@ -21,9 +21,6 @@ export default function Dashboard() {
         pending_appointments,
     } = usePage<DashboardPageProps>().props;
 
-    // Debug logs (descomenta si estás en desarrollo)
-    // console.log({ new_clients_this_month, total_appointments, monthly_revenue, status_percentaje, monthly_earnings, pending_appointments });
-
     const isDataReady = new_clients_this_month !== undefined && total_appointments !== undefined;
 
     return (

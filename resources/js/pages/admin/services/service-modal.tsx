@@ -12,7 +12,7 @@ interface Props {
 export default function ServiceModal({ open, onClose, categories, service }: Props) {
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="max-w-lg">
                 <DialogHeader>
                     <DialogTitle>{service ? "Editar Servicio" : "Nuevo Servicio"}</DialogTitle>
                 </DialogHeader>

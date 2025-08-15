@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const RescheduleModal = ({ open, onConfirm, onCancel, isAlreadyCompleted, initialDate, initialTime }: Props) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date(initialDate));
   const [selectedTime, setSelectedTime] = useState<string>(initialTime);
   const [unavailableHours, setUnavailableHours] = useState<{ hour: string; status: string }[]>([]);
 
@@ -52,6 +52,7 @@ export const RescheduleModal = ({ open, onConfirm, onCancel, isAlreadyCompleted,
           <DialogTitle>Reagendar cita</DialogTitle>
         </DialogHeader>
 
+        {/*Mostrar aqui arriba los estados de disponibilidad en una linea, no debajo de la fecha */}
         <div className="grid grid-cols-2 gap-10 m-5">
           <div className="grid gap-2 place-content-center">
             <Label htmlFor="date">Fecha</Label>
@@ -69,7 +70,13 @@ export const RescheduleModal = ({ open, onConfirm, onCancel, isAlreadyCompleted,
             <div className="grid grid-cols-3 gap-2">
               {availableHours.map((hour) => {
                 const status = getHourStatus(hour);
-                const isUnavailable = !!status && !(hour === initialTime && selectedDate.toDateString() === initialDate.toDateString());
+                const isUnavailable =
+                  !!status &&
+                  !(
+                    hour === initialTime &&
+                    selectedDate?.toDateString() === initialDate?.toDateString()
+                  );
+
                 const isSelected = selectedTime === hour;
 
                 return (

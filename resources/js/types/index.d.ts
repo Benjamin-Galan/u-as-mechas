@@ -67,6 +67,24 @@ export interface Service {
     category: Category
 }
 
+export interface PaginatedService {
+    current_page: number;
+    data: Service[];
+    from: number;
+    last_page: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    per_page: number;
+    to: number;
+    total: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
+
+
 export type ServiceList = Service[];
 
 export interface Promotions {
@@ -152,6 +170,8 @@ export interface CartItem {
     duration: number
     image?: string
     services?: Service[]
+    total?: string
+    subtotal?: string
 }
 
 export interface TimeSlot {
@@ -187,7 +207,7 @@ export interface Company {
 
 export type AppointmentsList = Appointment[];
 
-export interface Notification {
+export interface Notifications {
     id: number
     user_id: number
     title: string
@@ -199,38 +219,50 @@ export interface Notification {
     created_at: string | Date
 }
 
-export interface PaginatedAppointments {
-  current_page: number;
-  data: Appointment[];
-  from: number;
-  last_page: number;
-  next_page_url: string | null;
-  prev_page_url: string | null;
-  per_page: number;
-  to: number;
-  total: number;
-  links: {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }[];
-}
+type NotificationItem = {
+  id: string | number;
+  type?: string;
+  notifiable_type?: string;
+  notifiable_id?: string;
+  data: { message: string; appointment_id?: number; status?: string; at?: string };
+  read_at: string | null;
+  created_at: string;
+  updated_at?: string;
+};
+
 
 export interface PaginatedNotifications {
-  current_page: number;
-  data: Notification[];
-  from: number;
-  last_page: number;
-  next_page_url: string | null;
-  prev_page_url: string | null;
-  per_page: number;
-  to: number;
-  total: number;
-  links: {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }[];
+    current_page: number;
+    data: Notifications[];
+    from: number;
+    last_page: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    per_page: number;
+    to: number;
+    total: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
+
+export interface PaginatedAppointments {
+    current_page: number;
+    data: Appointment[];
+    from: number;
+    last_page: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    per_page: number;
+    to: number;
+    total: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
 }
 
 type DashboardPageProps = {
@@ -263,6 +295,7 @@ export interface Appointment {
     notes: string | null
     created_at: string
     updated_at: string
+    secure_token: string
     services: Service[]
     promotions: Promotions[] // o define el tipo específico
     packages: Packages[]   // idem
@@ -270,5 +303,5 @@ export interface Appointment {
         name: string
     }
     staff: Staff
-   
+
 }

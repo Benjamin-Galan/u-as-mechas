@@ -5,22 +5,51 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { router } from "@inertiajs/react"
 
 export default function AppointmentFilters() {
   const [openContainer, setOpenContainer] = useState(false);
+  const [search, setSearch] = useState("")
+  const [status, setStatus] = useState("all")
+  const [date, setDate] = useState<Date | undefined>(undefined)
 
   const toggleFilters = () => {
     setOpenContainer(!openContainer);
+  }
+
+  const applyFilters = () => {
+    router.get("/admin/appointments", {
+      search: search || undefined,
+      status: status !== "all" ? status : undefined,
+      date: date ? date.toISOString().split("T")[0] : undefined,
+    }, {
+      preserveState: true,
+      replace: true,
+    })
+  }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      applyFilters()
+    }, 400) // pequeño delay para evitar spam de peticiones
+    return () => clearTimeout(timeout)
+  }, [search, status, date])
+
+  const clearFilters = () => {
+    setSearch("")
+    setStatus("all")
+    setDate(undefined)
+    router.get("/admin/appointments", {}, { preserveState: true, replace: true })
   }
 
   return (
     <Card className="mb-8 shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50">
       <CardContent className="">
         <div className="flex items-center gap-3 mb-6">
-          <div 
-           onClick={toggleFilters}
-          className="h-8 hover:cursor-pointer w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"
+          <div
+            onClick={toggleFilters}
+            className="h-8 hover:cursor-pointer w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"
           >
             <Filter
               className="w-4 h-4 text-white "
@@ -37,12 +66,14 @@ export default function AppointmentFilters() {
         >
           {/* Búsqueda */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Buscar Cliente</label>
+            <label className="text-sm font-medium">Buscar Cliente</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Nombre del cliente..."
-                className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                className="pl-10"
               />
             </div>
           </div>
@@ -50,7 +81,7 @@ export default function AppointmentFilters() {
           {/* Filtro por estado */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Estado de la Cita</label>
-            <Select>
+            <Select value={status} onValueChange={(v) => setStatus(v)}>
               <SelectTrigger className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
                 <SelectValue placeholder="Seleccionar estado" />
               </SelectTrigger>
@@ -99,25 +130,26 @@ export default function AppointmentFilters() {
                   className="w-full justify-start text-left font-normal bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  Seleccionar fecha
+                  {date ? date.toLocaleDateString() : "Seleccionar fecha"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" initialFocus className="rounded-md border" />
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  className="rounded-md border"
+                />
               </PopoverContent>
             </Popover>
           </div>
 
           {/* Action Buttons */}
-        <div className="flex items-center gap-3 mt-3 pt-3 border-gray-200 dark:border-gray-700">
-          <Button variant="default" className="bg-indigo-600 hover:bg-indigo-700 text-white">
-            Aplicar Filtros
-          </Button>
-          <Button variant="outline" className="border-gray-300 dark:border-gray-600">
-            <X className="w-4 h-4 mr-2" />
-            Limpiar Filtros
-          </Button>
-        </div>
+          <div className="flex items-center gap-3 mt-3 pt-3">
+            <Button variant="outline" onClick={clearFilters}>
+              <X className="w-4 h-4 mr-2" /> Limpiar Filtros
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

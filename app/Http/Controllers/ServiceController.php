@@ -24,28 +24,54 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Service::with('category');
+
+        // Filtro por nombre
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Filtro por categoría
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Orden por precio
+        if ($request->filled('price_sort') && in_array($request->price_sort, ['asc', 'desc'])) {
+            $query->orderBy('price', $request->price_sort);
+        } else {
+            $query->orderBy('name', 'asc'); // Orden por defecto
+        }
+
+        // Paginación
+        $services = $query->paginate(10)->appends($request->query());
+
+        // Traer todas las categorías para el filtro
+        $categories = Category::all();
+
         return Inertia::render('admin/services/page', [
-            'services' => Service::with('category')->get(),
-            'categories' => Category::all()
+            'services' => $services,
+            'categories' => $categories,
+            'filters' => $request->only(['search', 'category_id', 'price_sort']),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(ServiceRequest $request)
     {
-       
         try {
-           
+
             $this->serviceService->store($request->validated());
-            
             return redirect()->back()->with('success', 'Servicio creado exitosamente');
         } catch (\Exception $e) {
             Log::error('Error creating service: ' . $e->getMessage());
-            
+
             return redirect()->back()
                 ->withErrors(['general' => 'Error al crear el servicio. Inténtalo de nuevo.'])
                 ->withInput();
@@ -66,7 +92,7 @@ class ServiceController extends Controller
             return redirect()->back()->with('success', 'Servicio actualizado exitosamente');
         } catch (\Exception $e) {
             Log::error('Error updating service: ' . $e->getMessage());
-            
+
             return redirect()->back()
                 ->withErrors(['general' => 'Error al actualizar el servicio. Inténtalo de nuevo.'])
                 ->withInput();
@@ -85,34 +111,9 @@ class ServiceController extends Controller
             return redirect()->back()->with('success', 'Servicio eliminado exitosamente');
         } catch (\Exception $e) {
             Log::error('Error deleting service: ' . $e->getMessage());
-            
+
             return redirect()->back()
                 ->withErrors(['general' => 'Error al eliminar el servicio. Inténtalo de nuevo.']);
         }
-    }
-
-    public function search(Request $request)
-    {
-        $query = Service::query();
-
-        if ($request->filled('name')) {
-            $query->where('name', 'LIKE', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-
-        if ($request->filled('min_price') && $request->filled('max_price')) {
-            $query->whereBetween('price', [$request->min_price, $request->max_price]);
-        }
-
-        if ($request->filled('min_discount')) {
-            $query->where('discount', '>=', $request->min_discount);
-        }
-
-        $services = $query->with('category')->get();
-
-        return response()->json($services);
     }
 }

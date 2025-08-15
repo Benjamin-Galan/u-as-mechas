@@ -29,8 +29,8 @@ export default function StaffForm({ staff, onSuccess }: Props) {
             : "Completa los datos para agregar un nuevo miembro al equipo"}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="">
+        <form onSubmit={handleSubmit} className="space-y-6 grid grid-cols-2 gap-2">
           {/* Nombre */}
           <div className="space-y-2">
             <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium">
@@ -117,43 +117,45 @@ export default function StaffForm({ staff, onSuccess }: Props) {
             )}
           </div>
 
-          {/* Estado de disponibilidad - Solo en modo edición */}
-          {isEdit && (
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-sm font-medium">
-                <UserCheck className="h-4 w-4" />
-                Estado de disponibilidad
-              </Label>
-              <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">{data.available ? "Disponible" : "No disponible"}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {data.available
-                      ? "El personal está disponible para asignaciones"
-                      : "El personal no está disponible actualmente"}
-                  </p>
+          <div className="col-span-2">
+            {/* Estado de disponibilidad - Solo en modo edición */}
+            {isEdit && (
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2 text-sm font-medium">
+                  <UserCheck className="h-4 w-4" />
+                  Estado de disponibilidad
+                </Label>
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">{data.available ? "Disponible" : "No disponible"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {data.available
+                        ? "El personal está disponible para asignaciones"
+                        : "El personal no está disponible actualmente"}
+                    </p>
+                  </div>
+                  <Switch
+                    id="available"
+                    checked={data.available}
+                    onCheckedChange={(checked) => setData("available", checked)}
+                  />
                 </div>
-                <Switch
-                  id="available"
-                  checked={data.available}
-                  onCheckedChange={(checked) => setData("available", checked)}
-                />
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Botón de envío */}
-          <div className="flex gap-3 pt-4">
-            <Button type="submit" disabled={processing} className="flex-1">
-              {processing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  {isEdit ? "Actualizando..." : "Creando..."}
-                </>
-              ) : (
-                <>{isEdit ? "Actualizar Personal" : "Crear Personal"}</>
-              )}
-            </Button>
+            {/* Botón de envío */}
+            <div className="flex gap-3 pt-4">
+              <Button type="submit" disabled={processing} className="flex-1">
+                {processing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    {isEdit ? "Actualizando..." : "Creando..."}
+                  </>
+                ) : (
+                  <>{isEdit ? "Actualizar Personal" : "Crear Personal"}</>
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </CardContent>

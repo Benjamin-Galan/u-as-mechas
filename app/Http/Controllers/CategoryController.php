@@ -33,9 +33,9 @@ class CategoryController extends Controller
             'name' => 'required|string|max:60|unique:categories'
         ]);
 
-        $category = Category::create(['name' => $request->name]);
+        Category::create(['name' => $request->name]);
 
-        return response()->json(['message' => 'Categoría creada con exito: ', $category]);
+        return redirect()->back()->with('success', 'Categoría creado exitosamente');
     }
 
     /**
@@ -59,13 +59,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:60|unique:categories,name,' . $category->id,
         ]);
 
-        $category->update(['name' => $request->name]);
+        $category->update($validated);
 
-        return response()->json(['message' => 'Categoría actualizada', 'category' => $category]);
+        // Con Inertia, un redirect back funciona bien:
+        return redirect()->back()->with('success', 'Categoría actualizada exitosamente');
     }
 
     /**
@@ -74,6 +75,6 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
-        return response()->json(['message' => 'Categoría eliminada']);
+        return redirect()->back()->with('success', 'Categoría eliminada');
     }
 }

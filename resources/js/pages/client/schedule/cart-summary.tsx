@@ -29,8 +29,6 @@ export function CartSummary({ cart, onRemove, onContinue }: CardSummaryProps) {
             </Card>
         )
     }
-    
-    console.log(cart)
 
     return (
         <Card>
@@ -84,10 +82,10 @@ export function CartSummary({ cart, onRemove, onContinue }: CardSummaryProps) {
                                 <div className="text-right">
                                     {/*Imprime el precio original */}
                                     {item.discount > 0 && (
-                                        <p className="text-sm text-muted-foreground line-through">${item.price.toFixed(2)}</p>
+                                        <p className="text-sm text-muted-foreground line-through">C$ {item.price.toFixed(2)}</p>
                                     )}
                                     {/*Imprime el precio con descuento */}
-                                    <p className="font-semibold text-primary">${(item.price - item.discount).toFixed(2)}</p>
+                                    <p className="font-semibold text-primary">C$ {(item.price - item.discount).toFixed(2)}</p>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +99,7 @@ export function CartSummary({ cart, onRemove, onContinue }: CardSummaryProps) {
                     </div>
                     <div className="flex justify-between items-center text-lg font-bold">
                         <span>Total:</span>
-                        <span className="text-primary">${getTotal().toFixed(2)}</span>
+                        <span className="text-primary">C$ {getTotal().toFixed(2)}</span>
                     </div>
                 </div>
 

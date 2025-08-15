@@ -1,18 +1,20 @@
-import type { Service } from "@/types"
+import type { PaginatedService, Service } from "@/types"
 import { CreateNew } from "./create-new"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Clock } from "lucide-react"
+import { ChevronLeft, ChevronRight, Clock } from "lucide-react"
 import ServiceOptions from "./service-options"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { router } from "@inertiajs/react"
 
 interface ServicesProps {
-  services?: Service[]
+  services: PaginatedService
   onEdit?: (service: Service) => void
   onDelete?: (service: Service) => void
 }
 
 export default function ServicesList({ services, onEdit, onDelete }: ServicesProps) {
-  if (!services || services.length === 0) {
+  if (!services) {
     return <CreateNew type="servicios" />
   }
 
@@ -39,60 +41,122 @@ export default function ServicesList({ services, onEdit, onDelete }: ServicesPro
   }
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {services.map((service) => (
-        <Card
-          key={service.id}
-          className="group  px-1 pt-1 pb-2transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 overflow-hidden"
-        >
-          {/* Imagen del servicio */}
-          <div className="aspect-video relative overflow-hidden rounded-lg bg-gray-100">
-            <img
-              src={service.image ? `/storage/services/${service.image}` : "/placeholder.svg?height=200&width=400"}
-              alt={service.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+    <div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {services.data.map((service) => (
+          <Card
+            key={service.id}
+            className="group  px-1 pt-1 pb-2transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 overflow-hidden"
+          >
+            {/* Imagen del servicio */}
+            <div className="aspect-video relative overflow-hidden rounded-lg bg-gray-100">
+              <img
+                src={service.image ? `/storage/services/${service.image}` : "/placeholder.svg?height=200&width=400"}
+                alt={service.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+
+
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
+                    {service.name}
+                  </CardTitle>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Categoría: {service.category?.name}</p>
+                </div>
+                <ServiceOptions onEdit={onEdit!} onDelete={onDelete!} service={service} />
+              </div>
+            </CardHeader>
+
+            <CardContent className="space-y-4 pt-0">
+              {/* Precio y descuento */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold text-green-600 dark:text-green-400">{service.price} C$</span>
+                </div>
+                {handleDiscount(String(service.discount))}
+              </div>
+
+              {/* Duración */}
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded-full w-fit">
+                <Clock className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                <span className="font-medium">{service.duration} minutos</span>
+              </div>
+
+              {/* Descripción */}
+              {service.description && (
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      {services.data.length > 0 && (
+        <div className="flex items-center justify-between mt-4 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <span>
+              Mostrando {services.from} - {services.to} de {services.total} resultados
+            </span>
           </div>
 
+          <div className="flex items-center gap-2">
+            {services.links.map((link, i) => {
+              if (link.label.includes("Previous")) {
+                return (
+                  <Button
+                    key={i}
+                    variant="outline"
+                    size="sm"
+                    disabled={!link.url}
+                    onClick={() => link.url && router.visit(link.url, { preserveState: true, preserveScroll: true })}
+                    className="flex items-center gap-1"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Anterior
+                  </Button>
+                )
+              }
 
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
-                  {service.name}
-                </CardTitle>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Categoría: {service.category?.name}</p>
-              </div>
-              <ServiceOptions onEdit={onEdit!} onDelete={onDelete!} service={service} />
-            </div>
-          </CardHeader>
+              if (link.label.includes("Next")) {
+                return (
+                  <Button
+                    key={i}
+                    variant="outline"
+                    size="sm"
+                    disabled={!link.url}
+                    onClick={() => link.url && router.visit(link.url, { preserveState: true, preserveScroll: true })}
+                    className="flex items-center gap-1"
+                  >
+                    Siguiente
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                )
+              }
 
-          <CardContent className="space-y-4 pt-0">
-            {/* Precio y descuento */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-green-600 dark:text-green-400">{service.price} C$</span>
-              </div>
-              {handleDiscount(String(service.discount))}
-            </div>
-
-            {/* Duración */}
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded-full w-fit">
-              <Clock className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-              <span className="font-medium">{service.duration} minutos</span>
-            </div>
-
-            {/* Descripción */}
-            {service.description && (
-              <div className="space-y-1">
-                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
-                  {service.description}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+              return (
+                <Button
+                  key={i}
+                  variant={link.active ? "default" : "outline"}
+                  size="sm"
+                  disabled={!link.url}
+                  onClick={() => link.url && router.visit(link.url, { preserveState: true, preserveScroll: true })}
+                  className={link.active ? "bg-indigo-600 hover:bg-indigo-700" : ""}
+                >
+                  {link.label}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

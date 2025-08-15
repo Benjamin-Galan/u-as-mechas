@@ -7,7 +7,7 @@ interface Props {
   onChange: (filter: string) => void
 }
 
-export default function NotificationsTabs({ readFilter, onChange }: Props) {
+export function NotificationsTabs({ readFilter, onChange }: Props) {
   return (
     <div className="flex items-center">
       <Tabs value={readFilter} onValueChange={onChange}>

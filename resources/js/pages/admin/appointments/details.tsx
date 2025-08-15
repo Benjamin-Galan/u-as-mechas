@@ -1,18 +1,18 @@
-"use client"
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Head, usePage } from "@inertiajs/react"
-import { Appointment, BreadcrumbItem, PaginatedAppointments } from "@/types"
+import { Appointment, BreadcrumbItem } from "@/types"
 import AppLayout from "@/layouts/app-layout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar } from "@/components/ui/calendar"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import IncludeList from "./include-list"
 import IncludeInfo from "./include-info"
 import { RescheduleModal } from "./reschedule-modal";
-import { formatDate } from "@/utils/format-time"
-import { Clock, NotebookPen, UserCheck2 } from "lucide-react"
+import { StylistsModal } from "./stylist-modal"
+import { NotebookPen, UserCheck2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAppointmentManager } from "@/hooks/useAppointmentManager"
+import ClientCalendar from "@/components/client-calendar"
+import { CheckInModal } from "./check-in-modal"
+import { useState } from "react"
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Citas", href: "/admin/appointments" },
@@ -24,9 +24,21 @@ export default function AdminAppointments() {
     appointment?: Appointment
   }
 
-  const { rescheduleModalOpen, setRescheduleModalOpen, handleReschedule } = useAppointmentManager();
+  const [checkInModal, setCheckInModal] = useState(false);
+  const [appointmentToCheckIn, setAppointmentToCheckIn] = useState<Appointment | null>(null);
 
-  console.log('citas', appointment);
+  const {
+    rescheduleModalOpen,
+    setRescheduleModalOpen,
+    handleReschedule,
+    stylistModalOpen,
+    setStylistModalOpen,
+    handleCheckIn
+  } = useAppointmentManager();
+
+  if (!appointment) {
+    return <div>No se encontró información de la cita.</div>;
+  }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -38,7 +50,10 @@ export default function AdminAppointments() {
             <h2 className="text-lg font-semibold">Información de la cita</h2>
 
             <div className="flex items-center gap-2">
-              <Button className="flex items-center gap-1">
+              <Button
+                className="flex items-center gap-1"
+                onClick={() => setStylistModalOpen(true)}
+              >
                 <UserCheck2 width={18} />
                 Asignar estilista
               </Button>
@@ -50,10 +65,20 @@ export default function AdminAppointments() {
                 <NotebookPen width={18} />
                 Reagendar
               </Button>
+
+              <Button
+                className="flex items-center gap-1"
+                onClick={() => {
+                  setCheckInModal(true)
+                  setAppointmentToCheckIn(appointment);
+                }}
+              >
+                <NotebookPen width={18} />
+                Check-in
+              </Button>
             </div>
           </div>
         </CardHeader>
-
 
         <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-6 ">
@@ -68,34 +93,7 @@ export default function AdminAppointments() {
           </div>
 
           <div className="space-y-6">
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm sticky top-6 bg-white dark:bg-zinc-900">
-              <CardHeader>
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-center">
-                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                    Fecha programada
-                  </p>
-                  <p className="text-lg font-bold text-blue-900 dark:text-blue-100 mt-1 capitalize">
-                    {new Date(appointment?.appointment_date).toLocaleDateString("es-ES", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </CardHeader>
-
-              <CardContent>
-                <Calendar
-                  mode="single"
-                  selected={new Date(appointment?.appointment_date)}
-                  disabled={[new Date()]}
-                  className="w-full flex justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900"
-                  initialFocus
-                />
-              </CardContent>
-            </Card>
-
+            <ClientCalendar appointment={appointment} />
           </div>
         </CardContent>
       </Card>
@@ -109,6 +107,23 @@ export default function AdminAppointments() {
         initialTime={appointment.appointment_time.slice(0, 5)} // HH:mm
       />
 
+      <StylistsModal
+        open={stylistModalOpen}
+        onCancel={() => setStylistModalOpen(false)}
+        selectedClient={appointment}
+      />
+
+      <CheckInModal
+        open={checkInModal}
+        onCancel={() => setCheckInModal(false)}
+        onConfirm={() => {
+          if (appointmentToCheckIn) {
+            handleCheckIn(appointmentToCheckIn);
+            setCheckInModal(false);
+          }
+        }}
+        isAlreadyConfirmed={appointmentToCheckIn?.status === "completed"}
+      />
     </AppLayout>
   )
 }

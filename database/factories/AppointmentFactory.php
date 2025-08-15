@@ -27,12 +27,28 @@ class AppointmentFactory extends Factory
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'staff_id' => Staff::inRandomOrder()->first()?->id,
             'appointment_date' => $this->faker->dateTimeBetween('-1 month', '+1 month'),
-            'appointment_time' => $this->faker->time('H:i'),
+            'appointment_time' => $this->faker->randomElement($this->getTimeSlots('08:00', '18:00')),
             'status' => $this->faker->randomElement(['pending', 'completed', 'cancelled']),
             'total_price' => $this->faker->randomFloat(2, 100, 1000),
             'secure_token' => Str::uuid(),
             'notes' => $this->faker->optional()->sentence(),
         ];
+    }
+
+    // Genera una lista de horas en intervalos de 30 minutos entre $start y $end
+    private function getTimeSlots($start, $end, $interval = 30): array
+    {
+        $startTime = strtotime($start);
+        $endTime = strtotime($end);
+        $timeSlots = [];
+
+        //Se ejecuta mientras la hora de inicio sea menor que la hora de fin
+        while ($startTime < $endTime) {
+            $timeSlots[] = date('H:i', $startTime);
+            $startTime = strtotime("+$interval minutes", $startTime);
+        }
+
+        return $timeSlots;
     }
 
     public function configure()

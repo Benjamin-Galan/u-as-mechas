@@ -5,42 +5,19 @@ import { toast } from "sonner";
 
 export function useAppointmentManager() {
     const [openModal, setOpenModal] = useState(false);
-    const [appointmentToEditm, setAppointmentToEdit] = useState<Appointment | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null);
     const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-
     const [modalOpen, setModalOpen] = useState(false);
     const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+    const [stylistModalOpen, setStylistModalOpen] = useState(false);
     const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
-    const handleCloseModal = () => {
-
-    }
-
-    // Función para manejar la edición de una cita
-
-    // Función para confirmar una cita
-
-    // Función para manejar la cancelación de una cita
-
-    // Función para confirmar la eliminación de una cita
-
-    // Función para eliminar una cita
-
-    // Función para completar una cita 
-
-    // Función para manejar la edición de un servicio
-    // const handleEdit = (service: Service) => {
-    //     setServiceToEdit(service);
-    //     setOpenModal(true);
-    // };
-
     // Función para enviar a la pagina de detalles de una cita
     const handleDetails = (appointment: Appointment) => {
-        router.get(route("appointments.details", appointment.id), {
-            
-        })
+        router.get(route("appointments.details", appointment.id))
     }
 
     // Función para confirmar la eliminación de un servicio
@@ -49,7 +26,7 @@ export function useAppointmentManager() {
         setIsDialogOpen(true);
     }
 
-    // Función para eliminar un servicio
+    // Función para eliminar una cita
     const handleDelete = () => {
         if (!appointmentToDelete) return;
 
@@ -65,21 +42,27 @@ export function useAppointmentManager() {
         })
     }
 
+    // Función para cancelar una cita
     const handleCancel = (appointment: Appointment) => {
-        router.patch(`/admin/appointments/${appointment.id}/status`, {
+        router.patch(`/admin/appointments/${appointment.id}/cancel`, {
             status: 'cancelled',
         }, {
             onSuccess: () => {
                 toast.success("Cita cancelada correctamente.");
                 setCancelModalOpen(false);
             },
-            onError: () => {
-                toast.error("Error al cancelar la cita.");
+            onError: (errors) => {
+                if (errors.status) {
+                    toast.error(errors.status); // Aquí mostramos el mensaje exacto
+                } else {
+                    toast.error("Error al cancelar la cita.");
+                }
             },
             preserveScroll: true,
         });
     };
 
+    // Función para reagendar una cita
     const handleReschedule = (date: string, time: string, appointment: Appointment) => {
         router.patch(`/admin/appointments/${appointment.id}/reschedule`, {
             appointment_date: date,
@@ -89,8 +72,53 @@ export function useAppointmentManager() {
                 toast.success("Cita reagendada correctamente.");
                 setRescheduleModalOpen(false);
             },
-            onError: () => {
-                toast.error("Error al reagendar cita.");
+            onError: (errors) => {
+                if (errors.status) {
+                    toast.error(errors.status); // Aquí mostramos el mensaje exacto
+                } else {
+                    toast.error("Error al reagendar la cita.");
+                }
+            },
+            preserveScroll: true,
+        });
+    }
+
+    // Función para confirmar una cita
+    const handleConfirm = (appointment: Appointment) => {
+        router.patch(`/admin/appointments/${appointment.id}/confirm`, {
+            status: 'confirmed',
+        }, {
+            onSuccess: () => {
+                toast.success("Cita confirmada correctamente.");
+                setModalOpen(false);
+            },
+            onError: (errors) => {
+                if (errors.status) {
+                    toast.error(errors.status); // Aquí mostramos el mensaje exacto
+                } else {
+                    toast.error("Error al confirmar la cita.");
+                }
+            }
+            ,
+            preserveScroll: true,
+        });
+    };
+
+    //Funcion para hacer check-in en una cita
+    const handleCheckIn = (appointment: Appointment) => {
+        router.patch(`/admin/appointments/${appointment.id}/check`, {
+            status: 'completed',
+        }, {
+            onSuccess: () => {
+                toast.success("Check-in realizado correctamente.");
+                setModalOpen(false);
+            },
+            onError: (errors) => {
+                if (errors.status) {
+                    toast.error(errors.status); // Aquí mostramos el mensaje exacto
+                } else {
+                    toast.error("Error al confirmar la cita.");
+                }
             },
             preserveScroll: true,
         });
@@ -98,12 +126,11 @@ export function useAppointmentManager() {
 
     return {
         openModal,
-        appointmentToEditm,
+        appointmentToEdit,
         appointmentToDelete,
         isDialogOpen,
         setOpenModal,
         setIsDialogOpen,
-        handleCloseModal,
         confirmDelete,
         handleCancel,
         handleReschedule,
@@ -116,7 +143,11 @@ export function useAppointmentManager() {
         cancelModalOpen,
         setCancelModalOpen,
         handleDelete,
-        handleDetails
+        handleDetails,
+        stylistModalOpen,
+        setStylistModalOpen,
+        handleConfirm,
+        handleCheckIn
     }
 
 }

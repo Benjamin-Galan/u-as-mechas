@@ -147,9 +147,9 @@ export function ProductsCard({ item, type, onAdd }: ProductsCardProps) {
                             </div>
                             <div className="text-right">
                                 {hasDiscount() && (
-                                    <p className="text-xs text-muted-foreground line-through">${getOriginalPrice().toFixed(2)}</p>
+                                    <p className="text-xs text-muted-foreground line-through">C$ {getOriginalPrice().toFixed(2)}</p>
                                 )}
-                                <p className="text-sm font-bold text-primary">${getPrice().toFixed(2)}</p>
+                                <p className="text-sm font-bold text-primary">C$ {getPrice().toFixed(2)}</p>
                             </div>
                         </div>
 

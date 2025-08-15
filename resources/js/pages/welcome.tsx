@@ -38,10 +38,6 @@ export default function Welcome() {
                         <Hero />
                     </section>
 
-                    {/* <section id="promociones">
-                        <Promotion promotions={promotions} />
-                    </section> */}
-
                     <section id="servicios">
                         <Services services={services} />
                     </section>

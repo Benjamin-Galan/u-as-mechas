@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Category, Service } from "@/types";
 import { router, useForm, usePage } from "@inertiajs/react";
-import { useState } from "react";
 
 interface Props {
     categories: Category[]
@@ -18,7 +17,15 @@ export default function ServiceForm({ categories, service, onSuccess }: Props) {
     const isEdit = !!service;
     const { errors } = usePage().props;
 
-    const { data, setData, post, put, processing } = useForm({
+    const { data, setData, post, processing } = useForm<{
+        name: string
+        description: string
+        price: string
+        discount: string
+        duration: string
+        category_id: string
+        image: File | null // <- aquí le dices que puede ser File
+    }>({
         name: service?.name ?? "",
         description: service?.description ?? "",
         price: service?.price.toString() ?? "",
@@ -28,31 +35,27 @@ export default function ServiceForm({ categories, service, onSuccess }: Props) {
         image: null,
     })
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setData(data => ({ ...data, [name]: e.target.value }));
-    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (isEdit) {
-            router.post('/services/' + service?.id, {
+            router.post(`/services/${service?.id}`, {
                 _method: 'put',
                 ...data,
             }, {
                 onSuccess
             })
         } else {
-            post('/services');
-            onSuccess();
+            post('/services', {
+                onSuccess
+            })
         }
     };
 
-    console.log(errors)
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4 grid grid-cols-2 gap-2">
             <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2 text-sm font-medium">
                     Nombre del Servicio
@@ -68,19 +71,6 @@ export default function ServiceForm({ categories, service, onSuccess }: Props) {
                     <p className="text-sm text-red-500 flex items-center gap-1">
                         <span className="text-red-500">•</span>
                         {errors.name}
-                    </p>
-                )}
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="description" className="flex items-center gap-2 text-sm font-medium">
-                    Descripción del Servicio
-                </Label>
-                <Textarea name="description" value={data.description} onChange={(e) => setData("description", e.target.value)} />
-                {errors.description && (
-                    <p className="text-sm text-red-500 flex items-center gap-1">
-                        <span className="text-red-500">•</span>
-                        {errors.description}
                     </p>
                 )}
             </div>
@@ -153,7 +143,8 @@ export default function ServiceForm({ categories, service, onSuccess }: Props) {
                     <SelectTrigger id="category_id">
                         <SelectValue placeholder="Selecciona una categoría" />
                     </SelectTrigger>
-                    <SelectContent>
+
+                    <SelectContent className="overflow-y-scroll max-h-60">
                         {categories.map((cat) => (
                             <SelectItem key={cat.id} value={cat.id.toString()}>
                                 {cat.name}
@@ -180,18 +171,32 @@ export default function ServiceForm({ categories, service, onSuccess }: Props) {
                 {errors.image && <p className="text-sm text-red-500 mt-1">{errors.image[0]}</p>}
             </div>
 
-
-            <div className="flex gap-3 pt-4">
-                <Button type="submit" disabled={processing} className="flex-1">
-                    {processing ? (
-                        <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                            {isEdit ? "Actualizando..." : "Creando..."}
-                        </>
-                    ) : (
-                        <>{isEdit ? "Actualizar Servicio" : "Crear Servicio"}</>
+            <div className="col-span-2">
+                <div className="space-y-2">
+                    <Label htmlFor="description" className="flex items-center gap-2 text-sm font-medium">
+                        Descripción del Servicio
+                    </Label>
+                    <Textarea name="description" value={data.description} onChange={(e) => setData("description", e.target.value)} />
+                    {errors.description && (
+                        <p className="text-sm text-red-500 flex items-center gap-1">
+                            <span className="text-red-500">•</span>
+                            {errors.description}
+                        </p>
                     )}
-                </Button>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                    <Button type="submit" disabled={processing} className="flex-1">
+                        {processing ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                                {isEdit ? "Actualizando..." : "Creando..."}
+                            </>
+                        ) : (
+                            <>{isEdit ? "Actualizar Servicio" : "Crear Servicio"}</>
+                        )}
+                    </Button>
+                </div>
             </div>
         </form>
     )

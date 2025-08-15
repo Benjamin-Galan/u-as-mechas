@@ -2,52 +2,33 @@
 
 namespace App\Events;
 
-use App\Models\Appointment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentCreated implements ShouldBroadcastNow
+class AppointmentCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public $appointment;
+    public $message;
 
-    public function __construct(Appointment $appointment)
+    public function __construct($message)
     {
-        $this->appointment = $appointment->load(['user', 'services', 'packages', 'promotions']);
+        $this->message = $message;
     }
 
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new PrivateChannel('admin.notifications'),
-        ];
+        return new Channel('notifications');
     }
 
-    public function broadcastWith(): array
+    public function broadcastAs()
     {
-        return [
-            'id' => $this->appointment->id,
-            'user' => [
-                'id' => $this->appointment->user_id,
-                'name' => $this->appointment->user->name,
-            ],
-            'date' => $this->appointment->appointment_date->format('d/m/Y'),
-            'time' => $this->appointment->appointment_time,
-            'total' => $this->appointment->total_price,
-            'services' => $this->appointment->services,
-            'packages' => $this->appointment->packages,
-            'promotions' => $this->appointment->promotions,
-            'sent_at' => now()->toDateTimeString(),
-        ];
+        return 'appointment.created';
     }
 }

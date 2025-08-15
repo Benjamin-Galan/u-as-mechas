@@ -23,7 +23,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="max-w-sm w-full p-5">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <p className="text-sm text-muted-foreground">{description}</p>

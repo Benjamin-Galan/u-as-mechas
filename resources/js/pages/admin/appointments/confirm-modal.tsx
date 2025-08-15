@@ -11,7 +11,7 @@ interface ConfirmModalProps {
 export const ConfirmModal = ({ open, onConfirm, onCancel, isAlreadyConfirmed }: ConfirmModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent>
+      <DialogContent className="max-w-sm w-full p-5">
         <DialogHeader>
           <DialogTitle>{isAlreadyConfirmed ? "Ya está confirmada" : "¿Confirmar esta cita?"}</DialogTitle>
         </DialogHeader>

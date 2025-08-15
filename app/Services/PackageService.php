@@ -29,8 +29,9 @@ class PackageService
 
         // Agregar cálculos al array de datos
         $data['subtotal'] = $subtotal;
-        $data['discount'] = $discountAmount;
         $data['total'] = $total;
+        $data['discount'] = $discountPercent; // guardamos porcentaje
+
 
         unset($data['services']);
 
@@ -64,8 +65,8 @@ class PackageService
         extract($this->calcularMontos($serviceIds, $discountPercent));
 
         $data['subtotal'] = $subtotal;
-        $data['discount'] = $discountAmount;
         $data['total'] = $total;
+        $data['discount'] = $discountPercent; // Guardamos el porcentaje
 
         unset($data['services']);
 

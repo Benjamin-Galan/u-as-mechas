@@ -1,0 +1,25 @@
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
+interface Props {
+  open: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isAlreadyConfirmed: boolean;
+}
+
+export const CheckInModal = ({ open, onConfirm, onCancel, isAlreadyConfirmed }: Props) => {
+  return (
+    <Dialog open={open} onOpenChange={onCancel}>
+      <DialogContent className="max-w-sm w-full p-5">
+        <DialogHeader>
+          <DialogTitle>{isAlreadyConfirmed ? "Ya está completada" : "Hacer check-in en esta cita?"}</DialogTitle>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onCancel}>Cancelar</Button>
+          {!isAlreadyConfirmed && <Button onClick={onConfirm}>Confirmar</Button>}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};

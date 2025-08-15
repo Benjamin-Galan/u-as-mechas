@@ -6,13 +6,13 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 
 import type { Packages, Service } from "@/types"
-import { useState } from "react"
-import axios from "axios"
+import { useEffect, useState } from "react"
+import { router } from "@inertiajs/react"
 
 interface Props {
     open: boolean
     onClose: () => void
-    onSaved: (savedPackage: Packages) => void
+    onSaved?: (savedPackage: Packages) => void
     packageToEdit: Packages | null
     services: Service[]
 }
@@ -21,13 +21,34 @@ export default function PackageModal({ open, onClose, packageToEdit = null, serv
     const [form, setForm] = useState({
         name: "",
         description: "",
-        discount: "",
+        discount: 0,
         is_active: true,
         services: [] as { service_id: number }[]
     })
 
     const [errors, setErrors] = useState<Record<string, string[]>>({})
     const [selectedServiceId, setSelectedServiceId] = useState<string>("")
+
+    useEffect(() => {
+        if (packageToEdit) {
+            setForm({
+                name: packageToEdit.name,
+                description: packageToEdit.description,
+                discount: packageToEdit.discount,
+                is_active: packageToEdit.is_active,
+                services: packageToEdit.services.map(s => ({ service_id: s.id })),
+            })
+        } else {
+            setForm({
+                name: "",
+                description: "",
+                discount: 0,
+                is_active: true,
+                services: []
+            })
+        }
+    }, [packageToEdit])
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -49,37 +70,41 @@ export default function PackageModal({ open, onClose, packageToEdit = null, serv
         setSelectedServiceId("") // limpiar selección
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setErrors({})
 
-        const payload = new FormData()
-        payload.append("name", form.name)
-        payload.append("description", form.description)
-        payload.append("discount", form.discount)
-        payload.append("is_active", form.is_active ? 'true' : 'false')
-        payload.append("services", JSON.stringify(form.services))
+        const payload = {
+            name: form.name,
+            description: form.description,
+            discount: form.discount,
+            is_active: form.is_active,
+            services: form.services
+        }
 
-        try {
-            if (packageToEdit) {
-                payload.append('_method', 'PUT')
-                await axios.post(`/packages/${packageToEdit.id}`, payload)
-            } else {
-                await axios.post("/packages", payload)
-            }
-            onClose()
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response?.status === 422) {
-                setErrors(error.response.data.errors || {})
-            } else {
-                alert("Ocurrió un error al guardar la promoción.")
-            }
+        if (packageToEdit) {
+            // Editar paquete
+            router.put(`/packages/${packageToEdit.id}`, payload, {
+                onSuccess: () => {
+                    onClose()
+                },
+                onError: (errors) => setErrors(errors || {})
+            })
+        } else {
+            // Crear paquete nuevo
+            router.post('/packages', payload, {
+                onSuccess: () => {
+                    onClose()
+                },
+                onError: (errors) => setErrors(errors || {})
+            })
         }
     }
 
+
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>{packageToEdit ? 'Editar Paquete' : 'Nuevo Paquete'}</DialogTitle>
                 </DialogHeader>

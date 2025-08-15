@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Package, Tag } from "lucide-react"
+import { Package} from "lucide-react"
 import GenericMenu from "@/components/generic-menu"
 import PackageServices from "./package-services"
 import type { Packages } from "@/types"
@@ -65,18 +65,6 @@ export default function PackageList({ allPackages, onEdit, onDelete }: Props) {
                                 <div className="flex items-center gap-2">
                                     <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{pkg.total} C$</span>
                                 </div>
-                                {/* {pkg.discount > 0 && (
-                                    <div className="flex items-center gap-1">
-                                        <Tag className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-                                        <Badge
-                                            variant="outline"
-                                            className="bg-pink-100 text-pink-700 border-pink-200
-                                 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-700"
-                                        >
-                                            -{pkg.discount}% OFF
-                                        </Badge>
-                                    </div>
-                                )} */}
                             </div>
                         </div>
 

@@ -33,7 +33,6 @@ type Screen = "services" | "cart" | "datetime" | "summary" | "status" | "appoint
 export default function ClientServices() {
     const {
         services: servicesProps = [],
-        promotions: promotionsProps = [],
         packages: packagesProps = [],
         appointments: appointmentsProps = []
     } = usePage().props as {
@@ -58,8 +57,8 @@ export default function ClientServices() {
             type,
             id: service.id,
             name: service.name,
-            price: type === "service" ? Number.parseFloat(service.price) : Number.parseFloat(service.total || service.subtotal),
-            discount: type === "service" ? Number.parseFloat(service.discount) : Number.parseFloat(service.discount || "0"),
+            price: type === "service" ? Number.parseFloat(service.price.toString()) : Number.parseFloat(String(service.total ?? service.subtotal ?? "0")),
+            discount: type === "service" ? Number.parseFloat(service.discount.toString()) : Number.parseFloat(service.discount.toString() || "0"),
             duration: type === "service" ? service.duration : service.services?.reduce((total: number, s: Service) => total + s.duration, 0) || 0,
             image: service.image,
             services: service.services || undefined,
@@ -129,9 +128,9 @@ export default function ClientServices() {
                         </div>
 
                         <Tabs defaultValue='services' className='w-full'>
-                            <TabsList className="grid w-full grid-cols-3">
+                            <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="services">Servicios</TabsTrigger>
-                                <TabsTrigger value="promotions">Promociones</TabsTrigger>
+                                {/* <TabsTrigger value="promotions">Promociones</TabsTrigger> */}
                                 <TabsTrigger value="packages">Paquetes</TabsTrigger>
                             </TabsList>
 
@@ -143,19 +142,6 @@ export default function ClientServices() {
                                             item={service}
                                             type='service'
                                             onAdd={() => handleAddService(service, "service")}
-                                        />
-                                    ))}
-                                </div>
-                            </TabsContent>
-
-                            <TabsContent value='promotions' className='space-y-4'>
-                                <div className='grid gap-4'>
-                                    {promotionsProps.map((promotion) => (
-                                        <ProductsCard
-                                            key={promotion.id}
-                                            item={promotion}
-                                            type='promotion'
-                                            onAdd={() => handleAddService(promotion, "promotion")}
                                         />
                                     ))}
                                 </div>

@@ -12,7 +12,7 @@ interface AppointmentListProps {
   onViewDetails: (id: number) => void
 }
 
-export function AppointmentList({ item, type, onViewDetails }: AppointmentListProps) {
+export function AppointmentList({ item, onViewDetails }: AppointmentListProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -59,9 +59,10 @@ export function AppointmentList({ item, type, onViewDetails }: AppointmentListPr
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold">Cita #{item.id}</span>
-              {getStatusBadge(item.status)}
+            {getStatusBadge(item.status)}
+
+            <div className="flex items-center gap-2 mb-1 mt-4">
+              <span className="font-semibold"> ID de cita: {item.secure_token.slice(-12)}</span>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">

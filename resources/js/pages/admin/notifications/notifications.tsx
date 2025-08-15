@@ -1,14 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Head, router, usePage } from "@inertiajs/react"
 import AppLayout from "@/layouts/app-layout"
-import type { Notification, BreadcrumbItem, PaginatedNotifications } from "@/types"
-import NotificationsTabs from "./notifications-tabs"
+import type { BreadcrumbItem, PaginatedNotifications } from "@/types"
+import {NotificationsTabs} from "./notifications-tabs"
 import NotificationList from "./notifications-list"
 import NotificationActions from "./notification-actions"
-import { echo } from "@/echo"
-import { toast } from "sonner"
 import { Bell } from "lucide-react"
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,7 +15,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function Notifications() {
-  const [notifications, setNotifications] = useState<Notification[]>([])
   const {
     notifications: notificationsProps,
     filter,
@@ -28,23 +25,6 @@ export default function Notifications() {
     type?: string
   }
 
-  useEffect(() => {
-    echo.private("admin.notifications").listen("AppointmentCreated", (e: Notification) => {
-      toast("Tienes una nueva cita", {
-        action: {
-          label: "Ver Notificaciones",
-          onClick: () => console.log("Undo"),
-        },
-      })
-      setNotifications((prev) => [e, ...prev])
-    })
-
-    return () => {
-      echo.leave("admin.notifications")
-    }
-  }, [])
-
-  console.log(notificationsProps, "Desde notificaciones")
 
   const [readFilter, setReadFilter] = useState<string>(filter || "unread")
   const [typeFilter, setTypeFilter] = useState<string>(type || "all")

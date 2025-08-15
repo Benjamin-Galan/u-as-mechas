@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Appointment } from "@/types";
-import { MoreVertical, Pencil, Trash } from "lucide-react";
+import { Check, Eye, MoreVertical, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,13 +11,15 @@ import {
 interface OptionsMenuProps {
   appointment: Appointment;
   onEdit: (appointment: Appointment) => void;
-  onDelete: (appointment: Appointment) => void;
+  onCancel: (appointment: Appointment) => void;
+  onConfirm: (appointment: Appointment) => void; 
 }
 
 export function OptionsMenu({
   appointment,
   onEdit,
-  onDelete,
+  onConfirm,
+  onCancel
 }: OptionsMenuProps) {
   const [open, setOpen] = useState(false);
 
@@ -39,28 +41,42 @@ export function OptionsMenu({
         {/* Detalles */}
         <DropdownMenuItem asChild className="w-full">
           <button
-            className="flex items-center w-full px-3 py-2 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="flex items-center w-full px-3 py-2 text-blue-700 dark:text-blue-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             onClick={() => {
               setOpen(false);
               setTimeout(() => onEdit(appointment), 100);
             }}
           >
-            <Pencil className="mr-2 h-4 w-4" />
-            Detalles
+            <Eye className="mr-2 h-4 w-4" />
+            Revisar
           </button>
         </DropdownMenuItem>
 
-        {/* Eliminar */}
+        {/* Confirmar */}
         <DropdownMenuItem asChild className="w-full">
           <button
-            className="flex items-center w-full px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+            className="flex items-center w-full px-3 py-2 text-lime-500 dark:text-lime-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             onClick={() => {
               setOpen(false);
-              onDelete(appointment);
+              onConfirm(appointment);
             }}
           >
-            <Trash className="mr-2 h-4 w-4" />
-            Eliminar
+            <Check className="mr-2 h-4 w-4" />
+            Confirmar
+          </button>
+        </DropdownMenuItem>
+
+        {/* Cancelar */}
+        <DropdownMenuItem asChild className="w-full">
+          <button
+            className="flex items-center w-full px-3 py-2 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+            onClick={() => {
+              setOpen(false);
+              onCancel(appointment);
+            }}
+          >
+            <X className="mr-2 h-4 w-4" />
+            Cancelar
           </button>
         </DropdownMenuItem>
       </DropdownMenuContent>

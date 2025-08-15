@@ -5,10 +5,14 @@ namespace App\Services;
 use App\Events\AppointmentConfirmed;
 use App\Events\AppointmentCreated;
 use App\Http\Requests\AppointmentRequest;
+use App\Mail\AppointmentConfirmedMail;
 use App\Models\Appointment;
+use App\Models\Notification;
+use App\Notifications\ConfirmedAppointment;
 use Clue\Redis\Protocol\Model\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AppointmentService
@@ -55,9 +59,6 @@ class AppointmentService
                     ]);
                 }
             }
-
-            // Emitir evento después de guardar todo
-            event(new AppointmentCreated($appointment));
 
             return $appointment;
         });
@@ -148,20 +149,6 @@ class AppointmentService
         return $query->paginate(10)->appends($filters);
     }
 
-    public function updateStatus(Appointment $appointment, string $status): Appointment
-    {
-        if (!in_array($status, ['pending', 'confirmed', 'cancelled', 'completed'])) {
-            throw new \InvalidArgumentException("Estado inválido");
-        }
-
-        $appointment->status = $status;
-        $appointment->save();
-
-        event(new AppointmentConfirmed($appointment));
-
-        return $appointment;
-    }
-
     //Función que devuelve los detalles de una cita
     public function getAppointmentDetails(int $appointmentId): Appointment
     {
@@ -187,6 +174,10 @@ class AppointmentService
     //Funcion que reagenda la cita desde el admin
     public function reschedule(Appointment $appointment, array $data): void
     {
+        if ($appointment->status == 'cancelled') {
+            throw new \InvalidArgumentException('No puedes reagendar citas canceladas.');
+        }
+
         $appointment->update([
             'appointment_date' => $data['appointment_date'],
             'appointment_time' => $data['appointment_time'],
@@ -205,5 +196,41 @@ class AppointmentService
                 ];
             })
             ->toArray();
+    }
+
+    public function confirm(Appointment $appointment): Appointment
+    {
+        if ($appointment->status !== 'pending') {
+            throw new \InvalidArgumentException('Solo se pueden confirmar citas pendientes.');
+        }
+
+        $appointment->status = 'confirmed';
+        $appointment->save();
+
+        return $appointment;
+    }
+
+    public function cancel(Appointment $appointment): Appointment
+    {
+        if ($appointment->status !== 'confirmed') {
+            throw new \InvalidArgumentException('Solo se pueden cancelar citas confirmadas.');
+        }
+
+        $appointment->status = 'cancelled';
+        $appointment->save();
+
+        return $appointment;
+    }
+
+    public function checked(Appointment $appointment): Appointment
+    {
+        if ($appointment->status !== 'confirmed') {
+            throw new \InvalidArgumentException('Solo se pueden completar citas confirmadas.');
+        }
+
+        $appointment->status = 'completed';
+        $appointment->save();
+
+        return $appointment;
     }
 }

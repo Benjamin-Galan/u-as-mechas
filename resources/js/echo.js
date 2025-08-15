@@ -1,14 +1,13 @@
-import Echo from 'laravel-echo';
+import Echo from 'laravel-echo'
 
-import Pusher from 'pusher-js';
-window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: '9d144aaac1dbead3faf7',
+  cluster: 'mt1',
+  forceTLS: true
+});
 
-export const echo = window.Echo = new Echo({
-    broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-    enabledTransports: ['ws', 'wss'],
+var channel = Echo.channel('admin-notifications');
+channel.listen('.appointment-created', function(data) {
+  alert(JSON.stringify(data));
 });

@@ -32,9 +32,7 @@ class TestSeeder extends Seeder
 
         // Crear notificaciones para cada cliente
         User::where('role', 'cliente')->get()->each(function ($user) {
-            Notification::factory(3)->create([
-                'user_id' => $user->id,
-            ]);
+            Notification::factory(3)->create();
         });
     }
 }

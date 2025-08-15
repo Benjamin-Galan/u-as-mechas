@@ -10,9 +10,11 @@ import type { Appointment } from "@/types"
 interface AppointmentDetailsProps {
   appointment: Appointment
   onBack: () => void
+  onReschedule?: (appointment: Appointment) => void
 }
 
 export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsProps) {
+  
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -54,10 +56,6 @@ export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsPr
     })
   }
 
-  const getTotalItems = () => {
-    return appointment.services.length + appointment.promotions.length + appointment.packages.length
-  }
-
   return (
     <div className="space-y-6">
       <Card>
@@ -88,8 +86,10 @@ export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsPr
             <div className="flex items-center gap-3">
               <MapPin className="w-5 h-5 text-primary" />
               <div>
-                <p className="font-medium">Salón de Belleza</p>
-                <p className="text-sm text-muted-foreground">Ubicación</p>
+                <p className="font-medium">Uñas & Mechas</p>
+                <p className="text-sm text-muted-foreground">
+                  Portón sur, Multicentro Las Americas, 50 metros abajo, Managua
+                </p>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsPr
                         <p className="text-xs text-muted-foreground">{service.description}</p>
                       </div>
                       <p className="font-semibold">
-                        ${(Number.parseFloat(service.price) - Number.parseFloat(service.discount)).toFixed(2)}
+                        C$ {(Number.parseFloat(service.price) - Number.parseFloat(service.discount)).toFixed(2)}
                       </p>
                     </div>
                   ))}
@@ -134,7 +134,7 @@ export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsPr
                         <p className="font-medium">{promotion.name}</p>
                         <p className="text-xs text-muted-foreground">{promotion.description}</p>
                       </div>
-                      <p className="font-semibold">${Number.parseFloat(promotion.pivot.price).toFixed(2)}</p>
+                      <p className="font-semibold">C$ {Number.parseFloat(promotion.total.toString()).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
@@ -157,7 +157,7 @@ export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsPr
                         <p className="font-medium">{pkg.name}</p>
                         <p className="text-xs text-muted-foreground">{pkg.description}</p>
                       </div>
-                      <p className="font-semibold">${Number.parseFloat(pkg.pivot.price).toFixed(2)}</p>
+                      <p className="font-semibold">C$ {Number.parseFloat(pkg.total.toString()).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
@@ -169,17 +169,18 @@ export function AppointmentDetails({ appointment, onBack }: AppointmentDetailsPr
           <div className="flex justify-between items-center">
             <span className="text-lg font-bold">Total:</span>
             <span className="text-lg font-bold text-primary">
-              ${Number.parseFloat(appointment.total_price).toFixed(2)}
+              C$ {Number.parseFloat(appointment.total_price).toFixed(2)}
             </span>
           </div>
 
-          {appointment.status === "pending" && (
+          {(appointment.status === "pending" || appointment.status === "confirmed") && (
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex-1">
+              <Button variant="outline" size="sm" className="flex-1 bg-transparent">
                 <Phone className="w-4 h-4 mr-2" />
                 Contactar
               </Button>
-              <Button variant="outline" size="sm" className="flex-1 text-red-500 hover:text-red-700">
+
+              <Button variant="outline" size="sm" className="flex-1 text-red-500 hover:text-red-700 bg-transparent">
                 Cancelar
               </Button>
             </div>

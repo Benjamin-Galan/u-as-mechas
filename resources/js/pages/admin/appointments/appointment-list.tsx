@@ -15,9 +15,11 @@ interface AppointmentProps {
   appointments: PaginatedAppointments
   onDelete: (appointment: Appointment) => void
   onEdit: (appointment: Appointment) => void
+  onConfirm: (appointment: Appointment) => void;
+  onCancel: (appointment: Appointment) => void;
 }
 
-export function AppointmentList({ appointments, onDelete, onEdit }: AppointmentProps) {
+export function AppointmentList({ appointments, onCancel, onEdit, onConfirm }: AppointmentProps) {
   return (
     <Card className="shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50">
       <CardHeader className="pb-4">
@@ -71,7 +73,6 @@ export function AppointmentList({ appointments, onDelete, onEdit }: AppointmentP
                           <p className="font-medium text-gray-900 dark:text-white">
                             {appointment.user?.name || "Usuario sin nombre"}
                           </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">ID: #{appointment.id}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -103,7 +104,7 @@ export function AppointmentList({ appointments, onDelete, onEdit }: AppointmentP
                       </div>
                     </TableCell>
                     <TableCell className="p-4">
-                      <OptionsMenu appointment={appointment} onDelete={onDelete} onEdit={onEdit} />
+                      <OptionsMenu appointment={appointment} onConfirm={onConfirm} onCancel={onCancel} onEdit={onEdit} />
                     </TableCell>
                   </TableRow>
                 ))

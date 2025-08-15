@@ -39,19 +39,15 @@ class ServicesService
             $imgName = Str::uuid() . '.' . $image->getClientOriginalExtension();
             $image->storeAs('services', $imgName, 'public');
             $data['image'] = $imgName;
+        } else {
+            unset($data['image']); // <-- clave para no borrar la anterior
         }
 
         $service->update($data);
 
-        $updatedService = $service->load('category');
-
-        // Si el descuento cambió y es mayor a 0
-        // if ($originalDiscount != $updatedService->discount && $updatedService->discount > 0) {
-        //     event(new ServiceCreatedOrDiscounted($updatedService));
-        // }
-
-        return $updatedService;
+        return $service->load('category');
     }
+
 
     public function destroy(Service $service)
     {

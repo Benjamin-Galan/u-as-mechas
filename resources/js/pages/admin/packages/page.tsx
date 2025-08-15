@@ -4,10 +4,9 @@ import type { BreadcrumbItem, Packages, Service } from "@/types"
 import AppLayout from "@/layouts/app-layout"
 import PackageList from "./package-list"
 import { HeaderContent } from "@/components/header-content"
-import { GenericModal } from "@/components/generic-modal"
-import { PackageForm } from "./package-form"
 import { usePackageManager } from "@/hooks/usePackageManager"
 import { ConfirmDialog } from "@/components/confirm-delete-dialog"
+import PackageModal from "./package-modal"
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -54,18 +53,11 @@ export default function PackagesPage() {
 
         <PackageList allPackages={packages} onEdit={handleEdit} onDelete={confirmDelete} />
 
-        <GenericModal
+        <PackageModal
           open={packageModal}
           onClose={handleCloseModal}
-          titleType="Paquete"
-          isEditing={!!packageToEdit}
-          children={
-            <PackageForm 
-              onClose={handleCloseModal}
-              currentPackage={packageToEdit}
-              services={services}
-            />
-          }
+          packageToEdit={packageToEdit}
+          services={services!}
         />
 
         <ConfirmDialog
